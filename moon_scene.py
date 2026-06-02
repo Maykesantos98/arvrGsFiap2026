@@ -41,6 +41,7 @@ SAMPLES = int(arg("--samples", "64"))
 SHOTS_DIR = arg("--shots", None)   # se definido: renderiza a serie de prints do trabalho
 ONLY = arg("--only", None)         # subconjunto de shots (nomes separados por virgula)
 EXPORT_GLB = arg("--export", None) # se definido: exporta uma aranha em .glb (para a web)
+SOLO = arg("--solo", None)         # se definido: breakdown de 1 objeto (final/clay/wire)
 
 # --------------------------------------------------------------------------- #
 # 1. Cena limpa e conhecida
@@ -1284,8 +1285,8 @@ def render_all_shots(out_dir):
     print("OK. %d prints salvos em %s" % (done, out_dir))
 
 
-def export_web_model(path):
-    """Constroi UMA aranha centrada e exporta em .glb para o visualizador 3D web."""
+def _build_one_spider(collection="WebSpider", emit=6.0):
+    """Constroi UMA aranha centrada (origem) na coleção dada."""
     keys = ('shell', 'carbon', 'glass', 'accent', 'glow')
     bms = {k: bmesh.new() for k in keys}
     build_spider(bms, 0.0, 0.0, math.radians(90), s=1.3, phase=0)
@@ -1294,10 +1295,15 @@ def export_web_model(path):
         'carbon': make_metal("Carbon", (0.035, 0.040, 0.050), 0.34, 0.3),
         'glass':  make_metal("Visor", (0.010, 0.012, 0.020), 0.05, 0.0),
         'accent': make_metal("Anodized", (0.0, 0.45, 0.50), 0.30, 1.0),
-        'glow':   make_emissive("Glow", (0.20, 0.85, 1.0), 6.0),
+        'glow':   make_emissive("Glow", (0.20, 0.85, 1.0), emit),
     }
     for k in keys:
-        bm_to_object(bms[k], "Spider_" + k, mats[k], smooth=True, collection="WebSpider")
+        bm_to_object(bms[k], "Spider_" + k, mats[k], smooth=True, collection=collection)
+
+
+def export_web_model(path):
+    """Constroi UMA aranha centrada e exporta em .glb para o visualizador 3D web."""
+    _build_one_spider("WebSpider")
     vl = bpy.context.view_layer
     for ob in bpy.data.objects:
         ob.select_set(False)
@@ -1308,7 +1314,90 @@ def export_web_model(path):
     print("GLB exportado:", path)
 
 
+def _scene_bbox_mesh():
+    mn = Vector((1e9, 1e9, 1e9))
+    mx = Vector((-1e9, -1e9, -1e9))
+    for o in scene.objects:
+        if o.type != 'MESH':
+            continue
+        for c in o.bound_box:
+            w = o.matrix_world @ Vector(c)
+            mn = Vector((min(mn.x, w.x), min(mn.y, w.y), min(mn.z, w.z)))
+            mx = Vector((max(mx.x, w.x), max(mx.y, w.y), max(mx.z, w.z)))
+    return mn, mx
+
+
+def render_solo(kind, out_dir):
+    """Breakdown de um objeto: render final + clay + wireframe, isolado."""
+    if not os.path.isdir(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
+    if kind == 'aranha':
+        _build_one_spider("Aranha")
+    elif kind == 'foguete':
+        build_lander()
+    elif kind == 'satelite':
+        build_satellite()
+    elif kind == 'bandeira':
+        build_flag()
+    else:
+        raise ValueError("kind invalido: " + kind)
+
+    # fundo neutro escuro
+    w = bpy.data.worlds.new("BG")
+    scene.world = w
+    w.use_nodes = True
+    bgn = next(n for n in w.node_tree.nodes if n.type == 'BACKGROUND')
+    bgn.inputs['Color'].default_value = (0.02, 0.025, 0.04, 1)
+    bgn.inputs['Strength'].default_value = 0.5
+    build_lights()
+
+    # camera enquadrando a bbox dos modelos (atualiza matrizes antes!)
+    bpy.context.view_layer.update()
+    mn, mx = _scene_bbox_mesh()
+    center = (mn + mx) / 2.0
+    size = (mx - mn).length
+    cam_data = bpy.data.cameras.new("CamSolo")
+    cam_data.lens = 55
+    cam = bpy.data.objects.new("CamSolo", cam_data)
+    scene.collection.objects.link(cam)
+    scene.camera = cam
+    dirv = Vector((1.0, -1.0, 0.55)).normalized()
+    cam.location = center + dirv * size * 1.15
+    cam.rotation_euler = (center - cam.location).to_track_quat('-Z', 'Y').to_euler()
+
+    scene.render.resolution_x, scene.render.resolution_y = 1400, 1050
+    scene.render.resolution_percentage = 100
+    scene.render.image_settings.file_format = 'PNG'
+    base = os.path.join(out_dir, kind)
+
+    # 1) final (Cycles)
+    gpu = try_enable_gpu()
+    scene.cycles.device = 'GPU' if gpu else 'CPU'
+    _set_cycles(110)
+    scene.cycles.use_denoising = True
+    scene.render.filepath = base + "_final.png"
+    print("Solo final ->", scene.render.filepath)
+    bpy.ops.render.render(write_still=True)
+
+    # 2) clay (Workbench solid)
+    _set_workbench('clay')
+    scene.render.filepath = base + "_clay.png"
+    bpy.ops.render.render(write_still=True)
+
+    # 3) wireframe (Workbench solid + modificador Wireframe)
+    _set_workbench('wire')
+    mods = _add_wire_mods(max(0.006, size * 0.004))
+    scene.render.filepath = base + "_wire.png"
+    bpy.ops.render.render(write_still=True)
+    _remove_mods(mods)
+    print("Breakdown '%s' salvo em %s" % (kind, out_dir))
+
+
 def main():
+    if SOLO:
+        render_solo(SOLO, SHOTS_DIR or os.path.join(HERE, "docs", "prints", "modelagem"))
+        return
     if EXPORT_GLB:
         export_web_model(EXPORT_GLB)
         return

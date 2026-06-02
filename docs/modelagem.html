@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modelagem · Making-of — Viagens Espaciais</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .mk-head{max-width:1100px;margin:0 auto;padding:90px 20px 10px;text-align:center}
+  .mk-head .kicker{color:var(--accent);font-size:13px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
+  .mk-head h1{font-size:clamp(28px,5vw,46px);margin-top:8px}
+  .mk-head p{color:var(--muted);max-width:680px;margin:12px auto 0}
+  .back{display:inline-block;margin-top:16px;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-size:13px}
+  .bd{max-width:1100px;margin:0 auto;padding:34px 20px}
+  .bd-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 14px 40px rgba(0,0,0,.4)}
+  .bd-card h3{font-size:24px;margin-bottom:6px}
+  .bd-card p{color:#d6e0fb;font-size:14.5px;max-width:80ch}
+  .bd-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+  .bd-row figure{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#070b18}
+  .bd-row img{width:100%;height:230px;object-fit:cover;display:block}
+  .bd-row figcaption{padding:9px 12px;font-size:12px;letter-spacing:.06em;color:var(--accent2);text-transform:uppercase;font-weight:700}
+  .tech{max-width:1100px;margin:10px auto 0;padding:0 20px}
+  .tech .box{background:#0b1226;border:1px solid var(--line);border-radius:14px;padding:18px 22px;color:#cdd9f5;font-size:14px}
+  .tech code{background:#0f1a2e;border:1px solid var(--line);border-radius:6px;padding:2px 7px;color:var(--accent)}
+  @media(max-width:720px){.bd-row{grid-template-columns:1fr}.bd-row img{height:auto}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas><div class="nebula"></div>
+
+<nav><div class="wrap">
+  <div class="logo">Missão <b>Aracne</b></div>
+  <div class="links"><a href="index.html">← Voltar ao site</a></div>
+</div></nav>
+
+<header class="mk-head">
+  <div class="kicker">Bastidores</div>
+  <h1>Modelagem — peça por peça</h1>
+  <p>Toda a cena é <b>modelagem autoral procedural</b> (Python/<code>bpy</code> no Blender).
+     Abaixo, cada objeto em três vistas: <b>final</b> (materiais), <b>clay</b> (volume) e
+     <b>wireframe</b> (a malha poligonal construída).</p>
+  <a class="back" href="index.html">Ver a história e a galeria</a>
+</header>
+
+<div class="tech"><div class="box">
+  🧩 <b>Como ver no Blender:</b> abra <code>moon_scene.blend</code> — cada objeto está em sua
+  própria <b>Collection</b> (Robos, Foguete, Satelite, Bandeira, Terreno, Caverna, Terra).
+  Selecione e use <b>Wireframe</b> / <b>Edit Mode</b> para inspecionar a malha. Toda a
+  construção está comentada em <code>moon_scene.py</code>.
+</div></div>
+
+<section class="bd"><div class="bd-card">
+  <h3>🕷️ Aranha-exploradora</h3>
+  <p>Corpo em dois segmentos (cefalotórax + abdome) feitos de <b>elipsoides</b>; cabeça-sensor
+     de vidro com <b>cluster de 3 olhos</b> e faróis; <b>6 pernas</b> de três segmentos
+     (coxa, fêmur, tíbia) como cilindros tronco-cônicos com <b>joelho alto</b> e esferas nas
+     juntas; antena e sonda dianteira. Pose em marcha tripé.</p>
+  <div class="bd-row">
+    <figure><img src="prints/modelagem/aranha_final.png"><figcaption>Final · materiais</figcaption></figure>
+    <figure><img src="prints/modelagem/aranha_clay.png"><figcaption>Clay · volume</figcaption></figure>
+    <figure><img src="prints/modelagem/aranha_wire.png"><figcaption>Wireframe · malha</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="bd"><div class="bd-card">
+  <h3>🚀 Foguete-lander</h3>
+  <p>Estágio de descida <b>octogonal</b> (cilindro de 8 lados) com <b>bocal cônico</b>,
+     <b>tanques</b> esféricos e <b>4 pernas</b> de pouso (perna + escora + sapata); por cima,
+     o corpo do foguete (cilindro) com <b>nariz cônico</b>, <b>aletas</b> (caixas chanfradas),
+     <b>janelas</b> de vidro, faixas de acento e antena.</p>
+  <div class="bd-row">
+    <figure><img src="prints/modelagem/foguete_final.png"><figcaption>Final · materiais</figcaption></figure>
+    <figure><img src="prints/modelagem/foguete_clay.png"><figcaption>Clay · volume</figcaption></figure>
+    <figure><img src="prints/modelagem/foguete_wire.png"><figcaption>Wireframe · malha</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="bd"><div class="bd-card">
+  <h3>📡 Satélite</h3>
+  <p>Corpo central como <b>caixa chanfrada</b> (bevel) com módulo superior; <b>dois painéis
+     solares</b> (caixas finas) com textura procedural <b>Brick</b> simulando as células;
+     <b>antena parabólica</b> (elipsoide achatado) com haste e feed-horn; antenas e luzes de
+     status emissivas.</p>
+  <div class="bd-row">
+    <figure><img src="prints/modelagem/satelite_final.png"><figcaption>Final · materiais</figcaption></figure>
+    <figure><img src="prints/modelagem/satelite_clay.png"><figcaption>Clay · volume</figcaption></figure>
+    <figure><img src="prints/modelagem/satelite_wire.png"><figcaption>Wireframe · malha</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="bd"><div class="bd-card">
+  <h3>🇧🇷 Bandeira do Brasil</h3>
+  <p>Mastro como <b>cilindro</b>; o pano é montado por <b>regiões geométricas planas</b>:
+     campo verde (retângulo), <b>losango</b> amarelo (quad), <b>círculo</b> azul (disco/leque
+     de triângulos) e a <b>faixa</b> branca — empilhadas nos dois lados para leitura de
+     qualquer ângulo.</p>
+  <div class="bd-row">
+    <figure><img src="prints/modelagem/bandeira_final.png"><figcaption>Final · materiais</figcaption></figure>
+    <figure><img src="prints/modelagem/bandeira_clay.png"><figcaption>Clay · volume</figcaption></figure>
+    <figure><img src="prints/modelagem/bandeira_wire.png"><figcaption>Wireframe · malha</figcaption></figure>
+  </div>
+</div></section>
+
+<section class="bd"><div class="bd-card">
+  <h3>🌑 Cena completa</h3>
+  <p>Terreno lunar (grade deslocada por ruído + crateras), caverna, pedras e a Terra
+     procedural. Veja a malha de todo o ambiente:</p>
+  <div class="bd-row">
+    <figure><img src="prints/14_wireframe_cena.png"><figcaption>Wireframe · cena</figcaption></figure>
+    <figure><img src="prints/15_clay_robo.png"><figcaption>Clay · robô</figcaption></figure>
+    <figure><img src="prints/16_wireframe_robo.png"><figcaption>Wireframe · robô</figcaption></figure>
+  </div>
+</div></section>
+
+<footer>
+  <b>Modelagem autoral</b> · Blender 5.1 (Cycles) · script procedural <code>moon_scene.py</code><br>
+  Missão Aracne — Viagens Espaciais
+</footer>
+
+<script>
+/* estrelas (mesmo efeito da home, standalone) */
+(function(){const cv=document.getElementById('sky'),ctx=cv.getContext('2d');let w,h,st;
+function rs(){w=cv.width=innerWidth;h=cv.height=innerHeight;const n=Math.min(260,w*h/7000|0);
+st=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.2,a:Math.random(),s:Math.random()*.02+.004}));}
+function tk(){ctx.clearRect(0,0,w,h);for(const s of st){s.a+=s.s;const t=.5+.5*Math.sin(s.a);ctx.globalAlpha=.25+.7*t;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(tk);}
+addEventListener('resize',rs);rs();tk();})();
+addEventListener('scroll',()=>document.querySelector('nav').classList.toggle('scrolled',scrollY>60),{passive:true});
+</script>
+</body>
+</html>
