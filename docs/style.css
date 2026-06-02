@@ -116,3 +116,16 @@ footer b{color:var(--ink)}
 .lb .arw{position:absolute;top:50%;transform:translateY(-50%);font-size:48px;color:#fff;cursor:pointer;user-select:none;padding:12px;opacity:.65;transition:.2s}
 .lb .arw:hover{opacity:1;color:var(--accent)}
 .lb .prev{left:14px}.lb .next{right:14px}
+
+/* ---------- integrantes do grupo ---------- */
+.team-sec{max-width:var(--maxw);margin:0 auto;padding:50px 20px 0}
+.team-card{background:linear-gradient(180deg,#0e1638,#0a0f22);border:1px solid var(--line);
+  border-radius:18px;padding:24px 26px;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.team-title{text-align:center;color:var(--accent);font-size:13px;letter-spacing:.25em;
+  text-transform:uppercase;font-weight:700;margin-bottom:18px}
+.team-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.team-list li{display:flex;justify-content:space-between;align-items:center;gap:12px;
+  background:#0b1226;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.team-list li span{font-size:14px;color:#eef3ff}
+.team-list li b{font-size:12px;color:var(--accent2);background:#0f1a2e;border:1px solid var(--line);
+  border-radius:999px;padding:4px 10px;white-space:nowrap}

@@ -105,14 +105,19 @@ blender -b --factory-startup -P moon_scene.py -- --export "docs/models/spider.gl
 
 ---
 
-## 👥 Autores
+## 👥 Integrantes do Grupo (FIAP)
 
-- [@Maykesantos98](https://github.com/Maykesantos98)
-- [@jhowcardinale](https://github.com/jhowcardinale)
+| Nome | RM |
+|------|----|
+| Arthur Marcio de Barros Silva | 563359 |
+| Matheus Goes da Silva | 566407 |
+| Maria Eduarda Sousa Acyole de Oliveira | 566337 |
+| Mayke Costa Santos | 562680 |
+| Gabriela Abdelnor Tavares | 562291 |
 
 ---
 
 <div align="center">
 <sub>Modelagem 3D autoral · Blender 5.1 (Cycles) · Visualização 3D com Three.js</sub><br>
-<sub>© 2026 · Maykesantos98 &amp; jhowcardinale</sub>
+<sub>© 2026 · Grupo FIAP</sub>
 </div>
