@@ -1,0 +1,118 @@
+/* ===========================================================================
+   Viagens Espaciais — Exploração de Cavernas Lunares
+   Site narrativo interativo · estilos
+   =========================================================================== */
+:root{
+  --bg:#04060e; --bg2:#0a1022; --card:#0d1430; --ink:#eef3ff; --muted:#9fb0d6;
+  --accent:#36d6ff; --accent2:#7ee0b8; --gold:#e9b84a; --line:#1b2748;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.65;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+
+/* fundo de estrelas (canvas) */
+#sky{position:fixed;inset:0;z-index:-2}
+.nebula{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60% 50% at 18% 12%,rgba(54,120,200,.16),transparent 60%),
+             radial-gradient(50% 45% at 85% 75%,rgba(120,60,180,.14),transparent 60%)}
+
+/* ---------- navbar ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:center;
+  transition:background .3s,backdrop-filter .3s,border-color .3s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(7,11,26,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{width:100%;max-width:var(--maxw);display:flex;align-items:center;justify-content:space-between;padding:14px 20px}
+nav .logo{font-weight:800;letter-spacing:.04em}
+nav .logo b{color:var(--accent)}
+nav .links{display:flex;gap:22px;font-size:14px}
+nav .links a{color:var(--muted);transition:color .2s}
+nav .links a:hover{color:#fff}
+@media(max-width:680px){nav .links{display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:90px 20px 40px}
+.hero .bg{position:absolute;inset:0;z-index:-1;background:
+  linear-gradient(180deg,rgba(4,6,14,.45),rgba(4,6,14,.85) 70%,var(--bg)),
+  url('prints/01_hero.png') center/cover no-repeat;will-change:transform}
+.hero .badge{display:inline-block;letter-spacing:.32em;text-transform:uppercase;font-size:12px;font-weight:700;
+  color:var(--bg);background:var(--accent);padding:8px 18px;border-radius:999px;margin-bottom:26px;
+  animation:fadeUp 1s .1s both}
+.hero h1{font-size:clamp(34px,7vw,76px);font-weight:800;line-height:1.03;text-shadow:0 6px 40px rgba(0,0,0,.7);animation:fadeUp 1s .25s both}
+.hero h1 span{color:var(--accent)}
+.hero p{color:var(--muted);max-width:660px;margin-top:18px;font-size:clamp(15px,2.4vw,20px);animation:fadeUp 1s .4s both}
+.scrollcue{position:absolute;bottom:26px;color:var(--accent);font-size:12px;letter-spacing:.25em;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.7}50%{transform:translateY(10px);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+/* ---------- seções gerais ---------- */
+section{position:relative}
+.sec-head{max-width:var(--maxw);margin:0 auto;padding:80px 20px 10px;text-align:center}
+.sec-head .kicker{color:var(--accent);font-size:13px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
+.sec-head h2{font-size:clamp(26px,4vw,42px);margin-top:8px}
+.sec-head p{color:var(--muted);max-width:640px;margin:12px auto 0}
+
+/* ---------- visualizador 3D ---------- */
+.viewer{max-width:var(--maxw);margin:24px auto 0;padding:0 20px}
+#viewer3d{position:relative;height:62vh;min-height:420px;border:1px solid var(--line);border-radius:20px;
+  overflow:hidden;background:radial-gradient(80% 80% at 50% 30%,#0e1736,#070b18);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#viewer3d canvas{display:block}
+.viewer .hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:var(--muted);font-size:12.5px;letter-spacing:.08em;pointer-events:none}
+.viewer .loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}
+.spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-right:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- capítulos (scrollytelling) ---------- */
+.chapter{max-width:var(--maxw);margin:0 auto;padding:70px 20px;display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+.chapter:nth-child(even) .ch-media{order:2}
+.ch-media{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.ch-media img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s ease;will-change:transform}
+.chapter:hover .ch-media img{transform:scale(1.05)}
+.ch-num{font-size:14px;font-weight:800;letter-spacing:.2em;color:var(--accent2)}
+.ch-body h3{font-size:clamp(22px,3.2vw,34px);margin:6px 0 14px;line-height:1.1}
+.ch-body p{color:#d6e0fb;font-size:15.5px}
+.ch-body .tag{display:inline-block;margin-top:16px;font-size:12px;color:var(--muted);border:1px solid var(--line);padding:5px 12px;border-radius:999px}
+@media(max-width:760px){.chapter{grid-template-columns:1fr;gap:20px}.chapter:nth-child(even) .ch-media{order:0}}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(46px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.visible{opacity:1;transform:none}
+.reveal.r-left{transform:translateX(-46px)}
+.reveal.r-right{transform:translateX(46px)}
+.reveal.r-left.visible,.reveal.r-right.visible{transform:none}
+
+/* ---------- estatísticas ---------- */
+.stats{max-width:var(--maxw);margin:30px auto 0;padding:0 20px;display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 26px;min-width:150px;text-align:center}
+.stat b{display:block;font-size:30px;color:var(--accent2)}
+.stat span{font-size:12px;color:var(--muted);letter-spacing:.08em}
+
+/* ---------- galeria ---------- */
+.filters{max-width:var(--maxw);margin:26px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.filter{cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;transition:.2s}
+.filter:hover{color:#fff;border-color:var(--accent)}
+.filter.active{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.grid{max-width:var(--maxw);margin:18px auto 0;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+figure.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s}
+figure.card:hover{transform:translateY(-6px);box-shadow:0 16px 36px rgba(0,0,0,.5);border-color:var(--accent)}
+figure.card img{width:100%;height:200px;object-fit:cover;background:#000}
+figure.card .meta{padding:12px 14px}
+figure.card .t{font-size:13.5px;color:#dce6ff}
+figure.card .tag{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.hide{display:none}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);margin-top:70px;padding:36px 20px;text-align:center;color:var(--muted);font-size:13px}
+footer b{color:var(--ink)}
+
+/* ---------- lightbox ---------- */
+.lb{position:fixed;inset:0;z-index:60;background:rgba(2,4,10,.95);display:none;align-items:center;justify-content:center;flex-direction:column;padding:24px}
+.lb.open{display:flex}
+.lb img{max-width:92vw;max-height:78vh;border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.7)}
+.lb .cap{color:#dce6ff;margin-top:16px;text-align:center;max-width:760px;font-size:14.5px}
+.lb .cap b{color:var(--accent)}
+.lb .x{position:absolute;top:16px;right:24px;font-size:36px;color:#fff;cursor:pointer;line-height:1}
+.lb .arw{position:absolute;top:50%;transform:translateY(-50%);font-size:48px;color:#fff;cursor:pointer;user-select:none;padding:12px;opacity:.65;transition:.2s}
+.lb .arw:hover{opacity:1;color:var(--accent)}
+.lb .prev{left:14px}.lb .next{right:14px}

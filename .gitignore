@@ -1,0 +1,16 @@
+# Ferramentas / ambiente (não fazem parte da entrega)
+.claude/
+claude-blender/
+.mcp.json
+
+# Backups e temporários do Blender
+*.blend1
+*.blend2
+*.blend3
+
+# Temporários / SO
+_*.png
+__pycache__/
+Thumbs.db
+.DS_Store
+desktop.ini

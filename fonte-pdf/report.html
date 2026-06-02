@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Viagens Espaciais â€” ExploraÃ§Ã£o de Cavernas Lunares</title>
+<style>
+  :root{
+    --bg:#070912; --bg2:#0d1326; --ink:#eaf0ff; --muted:#9fb0d6;
+    --accent:#36d6ff; --accent2:#7ee0b8; --line:#1e2a4a;
+  }
+  *{ box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  @page{ size:A4; margin:14mm; }
+
+  /* ---------- Capa ---------- */
+  .cover{
+    position:relative; height:265mm; border-radius:10px; overflow:hidden;
+    background:
+      linear-gradient(180deg, rgba(7,9,18,.30) 0%, rgba(7,9,18,.78) 70%, rgba(7,9,18,.96) 100%),
+      url('../docs/prints/01_hero.png') center/cover no-repeat, var(--bg2);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:26mm 18mm; page-break-after:always;
+  }
+  .badge{ display:inline-block; align-self:flex-start; font-size:12px; letter-spacing:.28em;
+    text-transform:uppercase; color:var(--bg); background:var(--accent);
+    padding:6px 14px; border-radius:999px; font-weight:700; margin-bottom:18px; }
+  .cover h1{ font-size:46px; line-height:1.05; margin:0 0 10px; font-weight:800;
+    text-shadow:0 2px 24px rgba(0,0,0,.6); }
+  .cover h1 span{ color:var(--accent); }
+  .cover p.sub{ font-size:18px; color:var(--muted); margin:0 0 26px; max-width:70%; }
+  .meta{ display:flex; gap:30px; flex-wrap:wrap; border-top:1px solid var(--line);
+    padding-top:16px; font-size:13px; color:var(--muted); }
+  .meta b{ color:var(--ink); display:block; font-size:14px; margin-top:3px; font-weight:600; }
+
+  /* ---------- Texto / seÃ§Ãµes ---------- */
+  .intro{ padding:6mm 2mm 2mm; page-break-after:always; }
+  .intro h2{ color:var(--accent); font-size:24px; margin:0 0 6px; }
+  .kline{ height:3px; width:60px; background:linear-gradient(90deg,var(--accent),transparent);
+    border:0; margin:0 0 16px; }
+  .intro p{ line-height:1.65; color:#d6e0fb; font-size:14.5px; max-width:62ch; }
+  .intro ul{ line-height:1.7; color:#d6e0fb; font-size:14px; }
+  .intro li b{ color:#fff; }
+
+  /* ---------- Figuras ---------- */
+  .grid{ display:flex; flex-direction:column; gap:14px; }
+  .fig{ break-inside:avoid; background:linear-gradient(180deg,#0e1530,#0a0f22);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    box-shadow:0 6px 20px rgba(0,0,0,.35); }
+  .fig img{ display:block; width:100%; height:auto; }
+  .cap{ padding:11px 16px 13px; border-top:1px solid var(--line); display:flex; gap:12px; }
+  .cap .n{ color:var(--bg); background:var(--accent2); font-weight:800; font-size:12px;
+    height:24px; min-width:24px; padding:0 7px; border-radius:7px; display:flex;
+    align-items:center; justify-content:center; }
+  .cap .t{ font-size:13px; line-height:1.45; color:#dce6ff; }
+  .cap .t b{ color:#fff; }
+  .pb{ page-break-after:always; }
+  .foot{ text-align:center; color:var(--muted); font-size:11px; padding:14px 0 0;
+    border-top:1px solid var(--line); margin-top:8px; }
+</style>
+</head>
+<body>
+
+<!-- CAPA -->
+<section class="cover">
+  <span class="badge">Modelagem 3D Â· Blender</span>
+  <h1>Viagens Espaciais<br><span>ExploraÃ§Ã£o de Cavernas Lunares</span></h1>
+  <p class="sub">Cena 3D autoral: frota de aranhas-exploradoras hexÃ¡podes, satÃ©lite de
+     comunicaÃ§Ã£o e foguete-lander na superfÃ­cie da Lua, com a Terra ao fundo.</p>
+  <div class="meta">
+    <div>Aluno(a)<b>________________________</b></div>
+    <div>Disciplina<b>Modelagem 3D</b></div>
+    <div>Tema<b>Viagens Espaciais</b></div>
+    <div>Ferramenta<b>Blender 5.1 Â· Cycles</b></div>
+  </div>
+</section>
+
+<!-- INTRODUÃ‡ÃƒO -->
+<section class="intro">
+  <h2>Sobre o projeto</h2>
+  <hr class="kline">
+  <p>Este documento apresenta uma cena 3D completa desenvolvida no <b>Blender</b>, com o tema
+     <b>Viagens Espaciais</b>. A cena retrata uma missÃ£o de exploraÃ§Ã£o de cavernas lunares: um
+     grupo de <b>aranhas-exploradoras</b> autÃ´nomas percorre o relevo da Lua, apoiadas por um
+     <b>satÃ©lite de comunicaÃ§Ã£o</b> em Ã³rbita e por um <b>foguete-lander</b> (a nave de origem),
+     tendo a <b>Terra</b> e o universo estrelado como pano de fundo.</p>
+  <p>Todos os objetos principais foram <b>modelados de forma autoral</b> por geometria
+     procedural (malhas, sÃ³lidos e juntas), com materiais PBR, iluminaÃ§Ã£o de trÃªs pontos e
+     gerenciamento de cor AgX. A seguir, 16 imagens documentam a cena, os objetos e a
+     construÃ§Ã£o da malha.</p>
+  <h2 style="margin-top:22px">Elementos modelados</h2>
+  <hr class="kline">
+  <ul>
+    <li><b>Aranhas-exploradoras hexÃ¡podes</b> â€” corpo compacto, cabeÃ§a-sensor com olhos, farÃ³is e seis pernas arqueadas articuladas.</li>
+    <li><b>SatÃ©lite de comunicaÃ§Ã£o</b> â€” corpo com manta tÃ©rmica, painÃ©is solares e antena parabÃ³lica.</li>
+    <li><b>Foguete-lander</b> â€” corpo de foguete com nariz cÃ´nico e aletas, estÃ¡gio de descida, pernas, tanques e bocal.</li>
+    <li><b>Bandeira do Brasil</b>, <b>terreno lunar</b> com crateras, <b>caverna</b> com arco de rochas e a <b>Terra</b> procedural.</li>
+  </ul>
+</section>
+
+<!-- FIGURAS -->
+<div class="grid">
+
+  <figure class="fig">
+    <img src="../docs/prints/01_hero.png" alt="">
+    <figcaption class="cap"><span class="n">1</span><span class="t">
+      <b>Vista geral da missÃ£o.</b> Frota de robÃ´s-exploradores na superfÃ­cie lunar com a Terra
+      ao fundo â€” imagem-sÃ­ntese do tema â€œViagens Espaciaisâ€.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/02_panorama.png" alt="">
+    <figcaption class="cap"><span class="n">2</span><span class="t">
+      <b>PanorÃ¢mica do sÃ­tio de exploraÃ§Ã£o.</b> Relevo lunar com crateras, pedras e a frota,
+      mostrando a escala do ambiente.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/03_robo_heroi.png" alt="">
+    <figcaption class="cap"><span class="n">3</span><span class="t">
+      <b>Aranha-exploradora (modelo autoral).</b> Close com profundidade de campo destacando o
+      corpo, a cabeÃ§a-sensor e as pernas arqueadas.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/04_robo_lateral.png" alt="">
+    <figcaption class="cap"><span class="n">4</span><span class="t">
+      <b>Pernas hexÃ¡podes articuladas.</b> Vista lateral evidenciando as seis pernas arqueadas
+      de trÃªs segmentos (coxa, fÃªmur e tÃ­bia) e as juntas com joelho alto.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/05_robo_visor.png" alt="">
+    <figcaption class="cap"><span class="n">5</span><span class="t">
+      <b>CabeÃ§a-sensor.</b> Detalhe do visor de vidro com o cluster de olhos em cyan, os farÃ³is
+      de exploraÃ§Ã£o e a sonda dianteira.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/06_satelite.png" alt="">
+    <figcaption class="cap"><span class="n">6</span><span class="t">
+      <b>SatÃ©lite de comunicaÃ§Ã£o (modelo autoral).</b> Em Ã³rbita lunar, com painÃ©is solares
+      estendidos e a Terra ao fundo.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/07_satelite_paineis.png" alt="">
+    <figcaption class="cap"><span class="n">7</span><span class="t">
+      <b>PainÃ©is solares e antena.</b> Detalhe das cÃ©lulas solares (textura procedural) e da
+      antena parabÃ³lica.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/08_foguete.png" alt="">
+    <figcaption class="cap"><span class="n">8</span><span class="t">
+      <b>Foguete-lander (modelo autoral).</b> A nave de origem da missÃ£o: corpo de foguete com
+      nariz cÃ´nico, aletas e janelas, sobre o estÃ¡gio de descida dourado.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/09_foguete_detalhe.png" alt="">
+    <figcaption class="cap"><span class="n">9</span><span class="t">
+      <b>EstÃ¡gio de descida do foguete.</b> Pernas de pouso com sapatas, tanques de combustÃ­vel
+      e bocal do motor em detalhe.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/10_bandeira.png" alt="">
+    <figcaption class="cap"><span class="n">10</span><span class="t">
+      <b>Bandeira do Brasil.</b> Marco da missÃ£o fincado no solo lunar, com o foguete ao fundo.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/11_caverna.png" alt="">
+    <figcaption class="cap"><span class="n">11</span><span class="t">
+      <b>Entrada da caverna lunar.</b> PoÃ§o com arco de rochas e brilho interno, inspecionado
+      por uma aranha-exploradora â€” o foco temÃ¡tico da missÃ£o.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/12_terra.png" alt="">
+    <figcaption class="cap"><span class="n">12</span><span class="t">
+      <b>A Terra vista da Lua.</b> Nuvens, brilho de atmosfera e luzes de cidade no lado
+      noturno â€” tudo por shader procedural.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/13_orbital_topo.png" alt="">
+    <figcaption class="cap"><span class="n">13</span><span class="t">
+      <b>Vista orbital (topo).</b> DisposiÃ§Ã£o geral dos elementos da cena vista de cima.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/14_wireframe_cena.png" alt="">
+    <figcaption class="cap"><span class="n">14</span><span class="t">
+      <b>Wireframe da cena.</b> Malha poligonal de todo o ambiente â€” evidÃªncia da modelagem
+      autoral e da topologia construÃ­da.</span></figcaption>
+  </figure>
+
+  <div class="pb"></div>
+
+  <figure class="fig">
+    <img src="../docs/prints/15_clay_robo.png" alt="">
+    <figcaption class="cap"><span class="n">15</span><span class="t">
+      <b>Render â€œclayâ€ do robÃ´.</b> Forma e volume sem materiais, evidenciando o estudo de
+      proporÃ§Ã£o e silhueta.</span></figcaption>
+  </figure>
+
+  <figure class="fig">
+    <img src="../docs/prints/16_wireframe_robo.png" alt="">
+    <figcaption class="cap"><span class="n">16</span><span class="t">
+      <b>Wireframe do robÃ´.</b> Detalhe da malha do robÃ´, mostrando a construÃ§Ã£o da geometria.</span></figcaption>
+  </figure>
+
+  <div class="foot">Viagens Espaciais â€” ExploraÃ§Ã£o de Cavernas Lunares Â· Modelagem 3D em Blender 5.1</div>
+</div>
+
+</body>
+</html>
+

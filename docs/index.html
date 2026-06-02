@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viagens Espaciais — Exploração de Cavernas Lunares</title>
+<meta name="description" content="Missão 3D de exploração de cavernas lunares com aranhas-robô, foguete e satélite — modelagem autoral em Blender.">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="nebula"></div>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">Missão <b>Aracne</b></div>
+    <div class="links">
+      <a href="#historia">História</a>
+      <a href="#aranha3d">Aranha 3D</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#modelagem">Modelagem</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="bg"></div>
+  <span class="badge">Viagens Espaciais · Blender 5.1</span>
+  <h1>Exploração de<br><span>Cavernas Lunares</span></h1>
+  <p>A crônica visual da Missão Aracne: aranhas-robô exploram a Lua, apoiadas por um
+     foguete-lander e um satélite, sob o olhar da Terra.</p>
+  <div class="scrollcue">▼ ROLE PARA COMEÇAR A EXPEDIÇÃO</div>
+</header>
+
+<!-- ESTATÍSTICAS -->
+<section>
+  <div class="stats">
+    <div class="stat reveal"><b>16</b><span>RENDERS</span></div>
+    <div class="stat reveal"><b>4</b><span>OBJETOS AUTORAIS</span></div>
+    <div class="stat reveal"><b>100%</b><span>PROCEDURAL</span></div>
+    <div class="stat reveal"><b>Three.js</b><span>3D INTERATIVO</span></div>
+  </div>
+</section>
+
+<!-- HISTÓRIA / CAPÍTULOS -->
+<section id="historia">
+  <div class="sec-head reveal">
+    <div class="kicker">A Expedição</div>
+    <h2>Sete capítulos rumo ao desconhecido</h2>
+    <p>Acompanhe a jornada da frota desde o pouso até a descoberta da caverna lunar.</p>
+  </div>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-left"><img src="prints/08_foguete.png" alt="Foguete-lander"></div>
+    <div class="ch-body reveal r-right">
+      <div class="ch-num">CAPÍTULO 01</div>
+      <h3>A Partida</h3>
+      <p>Após a longa travessia desde a Terra, o foguete-lander <b>Aurora</b> toca o solo
+         empoeirado da Lua. Suas pernas de pouso absorvem o impacto e o motor se cala —
+         o silêncio do vácuo toma conta. A missão começou.</p>
+      <span class="tag">Foguete-lander · modelo autoral</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-right"><img src="prints/12_terra.png" alt="A Terra"></div>
+    <div class="ch-body reveal r-left">
+      <div class="ch-num">CAPÍTULO 02</div>
+      <h3>Sob o Olhar da Terra</h3>
+      <p>No céu negro e sem ar, a <b>Terra</b> paira azul e viva. Seus oceanos, nuvens e as
+         luzes das cidades no lado noturno lembram à tripulação robótica de onde vieram —
+         e por que vieram tão longe.</p>
+      <span class="tag">Terra procedural</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-left"><img src="prints/03_robo_heroi.png" alt="Aranha-exploradora"></div>
+    <div class="ch-body reveal r-right">
+      <div class="ch-num">CAPÍTULO 03</div>
+      <h3>A Frota Desperta</h3>
+      <p>Das entranhas do lander surgem as <b>aranhas-exploradoras</b>. Seis pernas
+         articuladas se desdobram, os olhos cyan acendem e a marcha começa. Pequenas,
+         ágeis e incansáveis, foram feitas para onde humanos não chegam.</p>
+      <span class="tag">Aranhas-exploradoras hexápodes</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-right"><img src="prints/05_robo_visor.png" alt="Cabeça-sensor"></div>
+    <div class="ch-body reveal r-left">
+      <div class="ch-num">CAPÍTULO 04</div>
+      <h3>Olhos na Escuridão</h3>
+      <p>Cada aranha carrega uma <b>cabeça-sensor</b> com um cluster de olhos e faróis
+         potentes. Uma sonda dianteira analisa o terreno. Nada escapa — cada rocha,
+         cada sombra, cada fenda é mapeada.</p>
+      <span class="tag">Sensores · faróis · sonda</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-left"><img src="prints/06_satelite.png" alt="Satélite"></div>
+    <div class="ch-body reveal r-right">
+      <div class="ch-num">CAPÍTULO 05</div>
+      <h3>Sentinela Orbital</h3>
+      <p>Bem acima, um <b>satélite de comunicação</b> cruza a órbita lunar. Seus painéis
+         solares bebem a luz do Sol e sua antena retransmite cada descoberta de volta para
+         casa, em tempo real.</p>
+      <span class="tag">Satélite · painéis solares</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-right"><img src="prints/11_caverna.png" alt="Caverna lunar"></div>
+    <div class="ch-body reveal r-left">
+      <div class="ch-num">CAPÍTULO 06</div>
+      <h3>A Boca da Caverna</h3>
+      <p>Então, o objetivo: um <b>poço escuro</b> cercado por um arco de rochas, exalando um
+         brilho frio das profundezas. Uma aranha se inclina sobre a borda e seus faróis
+         mergulham no vazio. O que há lá embaixo?</p>
+      <span class="tag">Caverna lunar · objetivo da missão</span>
+    </div>
+  </article>
+
+  <article class="chapter">
+    <div class="ch-media reveal r-left"><img src="prints/10_bandeira.png" alt="Bandeira do Brasil"></div>
+    <div class="ch-body reveal r-right">
+      <div class="ch-num">CAPÍTULO 07</div>
+      <h3>Bandeira em Solo Lunar</h3>
+      <p>Antes de descer, a frota crava um marco: a <b>bandeira do Brasil</b> fincada na
+         poeira lunar, ao lado do foguete. Uma assinatura silenciosa de quem ousou
+         explorar o desconhecido.</p>
+      <span class="tag">Marco da missão</span>
+    </div>
+  </article>
+</section>
+
+<!-- VISUALIZADOR 3D -->
+<section id="aranha3d">
+  <div class="sec-head reveal">
+    <div class="kicker">Modelo Interativo</div>
+    <h2>Conheça a aranha em 3D</h2>
+    <p>Arraste para girar, role para aproximar. O modelo abaixo é a própria aranha-exploradora
+       exportada da cena (.glb), renderizada ao vivo no navegador.</p>
+  </div>
+  <div class="viewer reveal">
+    <div id="viewer3d">
+      <div class="loader"><span class="spinner"></span> Carregando modelo 3D…</div>
+      <div class="hint">🖱️ arraste para orbitar · scroll para zoom</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+  <div class="sec-head reveal">
+    <div class="kicker">Galeria</div>
+    <h2>Todos os registros da missão</h2>
+    <p>16 imagens renderizadas. Clique para ampliar; use as setas para navegar.</p>
+  </div>
+  <div class="filters reveal">
+    <button class="filter active" data-f="all">Todos</button>
+    <button class="filter" data-f="geral">Visão Geral</button>
+    <button class="filter" data-f="robo">Aranhas</button>
+    <button class="filter" data-f="foguete">Foguete</button>
+    <button class="filter" data-f="satelite">Satélite</button>
+    <button class="filter" data-f="caverna">Caverna</button>
+    <button class="filter" data-f="terra">Terra</button>
+    <button class="filter" data-f="model">Modelagem</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- MODELAGEM -->
+<section id="modelagem">
+  <div class="sec-head reveal">
+    <div class="kicker">Bastidores</div>
+    <h2>Modelagem autoral</h2>
+    <p>Toda a cena foi construída por geometria procedural no Blender. Os renders em
+       wireframe e clay comprovam a topologia criada do zero.</p>
+  </div>
+  <div class="grid reveal">
+    <figure class="card" onclick=""><img src="prints/14_wireframe_cena.png" alt=""><div class="meta"><div class="tag">Wireframe</div><div class="t">Malha de toda a cena</div></div></figure>
+    <figure class="card"><img src="prints/15_clay_robo.png" alt=""><div class="meta"><div class="tag">Clay</div><div class="t">Volume do robô sem materiais</div></div></figure>
+    <figure class="card"><img src="prints/16_wireframe_robo.png" alt=""><div class="meta"><div class="tag">Wireframe</div><div class="t">Malha do robô em detalhe</div></div></figure>
+  </div>
+</section>
+
+<footer>
+  <b>Viagens Espaciais — Exploração de Cavernas Lunares</b><br>
+  Missão Aracne · Modelagem 3D autoral em Blender 5.1 (Cycles) · Visualização 3D com Three.js<br>
+  Aranhas-exploradoras · Foguete-lander · Satélite · Bandeira do Brasil · Terra procedural
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <span class="x" id="lbx">&times;</span>
+  <span class="arw prev" id="lbprev">&#10094;</span>
+  <span class="arw next" id="lbnext">&#10095;</span>
+  <img id="lbimg" src="" alt="">
+  <div class="cap" id="lbcap"></div>
+</div>
+
+<script src="spider-data.js"></script>
+<script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+============================================================
+  VIAGENS ESPACIAIS — EXPLORAÇÃO DE CAVERNAS LUNARES
+  Trabalho de Modelagem 3D · Blender 5.1
+============================================================
+
+SITE AO VIVO (GitHub Pages):
+  https://maykesantos98.github.io/arvrGsFiap2026/
+
+REPOSITÓRIO:
+  https://github.com/Maykesantos98/arvrGsFiap2026
+
+
+ESTRUTURA DO PROJETO
+--------------------
+moon_scene.blend                  Arquivo do Blender (cena completa, editável).
+                                  Collections: Terreno, Pedras, Caverna, Terra, Robos,
+                                  Satelite, Foguete, Bandeira, Iluminacao, Camera.
+moon_scene.py                     Script-fonte (gera a cena, os 16 renders e o .glb).
+Trabalho_Viagens_Espaciais.pdf    Documento para entrega (capa + 16 figuras com legendas).
+README.md / LEIA-ME.txt           Documentação.
+
+docs/                             Site interativo (também é a fonte do GitHub Pages).
+    index.html  style.css  script.js  spider-data.js
+    models/spider.glb             Aranha exportada (visualizador 3D).
+    prints/                       As 16 imagens renderizadas (1920x1080).
+
+fonte-pdf/
+    report.html                   Documento que gera o PDF (usa as imagens de docs/prints).
+
+
+COMO ABRIR
+----------
+• Site online:  https://maykesantos98.github.io/arvrGsFiap2026/
+• Site local:   abra "docs/index.html" no navegador (a história, a galeria e o
+                modelo 3D da aranha funcionam; o Three.js carrega via internet/CDN).
+• Blender:      abra "moon_scene.blend" no Blender 5.1 (ou 4.x).
+• PDF:          abra "Trabalho_Viagens_Espaciais.pdf".
+
+
+COMO REGERAR (opcional)
+-----------------------
+BLENDER="C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"
+
+Renderizar os 16 prints:
+  & $BLENDER -b --factory-startup -P moon_scene.py -- --shots "docs\prints" --save "moon_scene.blend"
+Exportar a aranha em .glb:
+  & $BLENDER -b --factory-startup -P moon_scene.py -- --export "docs\models\spider.glb"
+
+OBS: rode com --factory-startup (o add-on de usuário "dream_textures" está quebrado
+nesta máquina e trava o modo background sem essa flag).
+============================================================
