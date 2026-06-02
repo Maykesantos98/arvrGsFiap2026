@@ -68,6 +68,19 @@ const ITEMS = [
   {f:"model",   img:"prints/14_wireframe_cena.png",  t:"Wireframe da cena",        c:"Malha poligonal de todo o ambiente — prova da modelagem autoral."},
   {f:"model",   img:"prints/15_clay_robo.png",       t:"Render clay",              c:"Forma e volume do robô sem materiais — estudo de silhueta."},
   {f:"model",   img:"prints/16_wireframe_robo.png",  t:"Wireframe do robô",        c:"Detalhe da malha do robô, mostrando a construção."},
+  // --- breakdown por objeto (final / clay / wireframe) ---
+  {f:"model",   img:"prints/modelagem/aranha_final.png",    t:"Aranha — final",      c:"Aranha-exploradora isolada, com materiais."},
+  {f:"model",   img:"prints/modelagem/aranha_clay.png",     t:"Aranha — clay",       c:"Volume da aranha sem materiais."},
+  {f:"model",   img:"prints/modelagem/aranha_wire.png",     t:"Aranha — wireframe",  c:"Malha poligonal da aranha-exploradora."},
+  {f:"model",   img:"prints/modelagem/foguete_final.png",   t:"Foguete — final",     c:"Foguete-lander isolado, com materiais."},
+  {f:"model",   img:"prints/modelagem/foguete_clay.png",    t:"Foguete — clay",      c:"Volume do foguete sem materiais."},
+  {f:"model",   img:"prints/modelagem/foguete_wire.png",    t:"Foguete — wireframe", c:"Malha poligonal do foguete-lander."},
+  {f:"model",   img:"prints/modelagem/satelite_final.png",  t:"Satélite — final",    c:"Satélite isolado, com materiais."},
+  {f:"model",   img:"prints/modelagem/satelite_clay.png",   t:"Satélite — clay",     c:"Volume do satélite sem materiais."},
+  {f:"model",   img:"prints/modelagem/satelite_wire.png",   t:"Satélite — wireframe",c:"Malha poligonal do satélite."},
+  {f:"model",   img:"prints/modelagem/bandeira_final.png",  t:"Bandeira — final",    c:"Bandeira do Brasil isolada, com materiais."},
+  {f:"model",   img:"prints/modelagem/bandeira_clay.png",   t:"Bandeira — clay",     c:"Volume da bandeira sem materiais."},
+  {f:"model",   img:"prints/modelagem/bandeira_wire.png",   t:"Bandeira — wireframe",c:"Malha da bandeira do Brasil."},
 ];
 const TAGS={geral:"Visão Geral",robo:"Aranhas",foguete:"Foguete",satelite:"Satélite",caverna:"Caverna",terra:"Terra",model:"Modelagem"};
 const grid = document.getElementById('grid');
