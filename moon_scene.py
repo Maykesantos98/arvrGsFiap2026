@@ -553,35 +553,38 @@ def build_spider(bms, base_x, base_y, facing, s=1.0, phase=0):
 
 
 def build_robots():
-    keys = ('shell', 'carbon', 'glass', 'accent', 'glow')
-    bms = {k: bmesh.new() for k in keys}
-
+    """Cada aranha vira uma Collection propria ('Aranha_N') com seus PROPRIOS
+    materiais e uma identidade visual unica -> editavel individualmente."""
     cvx, cvy = CAVE[0], CAVE[1]   # boca da caverna
 
     def face_cave(x, y):
         return math.atan2(cvy - y, cvx - x)
 
-    # (x, y, escala, fase_da_marcha, facing)
+    # x, y, escala, fase, facing, cor_shell, cor_accent, cor_glow
     robots = [
-        (0.8, 0.2, 1.18, 0, math.radians(-65)),       # heroi: "rosto" virado p/ camera
-        (-4.0, 4.0, 0.95, 1, face_cave(-4.0, 4.0)),
-        (4.6, 3.2, 0.90, 0, face_cave(4.6, 3.2)),
-        (-2.2, 10.8, 0.80, 1, face_cave(-2.2, 10.8)),  # na borda, olhando p/ dentro da caverna
+        (0.8, 0.2, 1.18, 0, math.radians(-65),
+         (0.86, 0.88, 0.92), (0.00, 0.45, 0.50), (0.20, 0.85, 1.00)),   # 1 ciano/teal
+        (-4.0, 4.0, 0.95, 1, face_cave(-4.0, 4.0),
+         (0.91, 0.87, 0.82), (0.85, 0.35, 0.05), (1.00, 0.62, 0.15)),   # 2 ambar/laranja
+        (4.6, 3.2, 0.90, 0, face_cave(4.6, 3.2),
+         (0.82, 0.87, 0.92), (0.10, 0.55, 0.25), (0.30, 1.00, 0.45)),   # 3 verde
+        (-2.2, 10.8, 0.80, 1, face_cave(-2.2, 10.8),
+         (0.87, 0.84, 0.93), (0.55, 0.10, 0.55), (0.85, 0.35, 1.00)),   # 4 magenta/roxo
     ]
-    for (rx, ry, sc, ph, fac) in robots:
+    keys = ('shell', 'carbon', 'glass', 'accent', 'glow')
+    for idx, (rx, ry, sc, ph, fac, c_shell, c_acc, c_glow) in enumerate(robots, start=1):
+        bms = {k: bmesh.new() for k in keys}
         build_spider(bms, rx, ry, fac, s=sc, phase=ph)
-
-    mats = {
-        'shell':  make_shell("ShellWhite", (0.86, 0.88, 0.92), rough=0.22),
-        'carbon': make_metal("Carbon", (0.035, 0.040, 0.050), 0.34, 0.3),
-        'glass':  make_metal("Visor", (0.010, 0.012, 0.020), 0.05, 0.0),
-        'accent': make_metal("Anodized", (0.0, 0.45, 0.50), 0.30, 1.0),
-        'glow':   make_emissive("Glow", (0.20, 0.85, 1.0), 20.0),
-    }
-    names = {'shell': 'RobotShell', 'carbon': 'RobotCarbon', 'glass': 'RobotGlass',
-             'accent': 'RobotAccent', 'glow': 'RobotGlow'}
-    for k in keys:
-        bm_to_object(bms[k], names[k], mats[k], smooth=True, collection="Robos")
+        mats = {
+            'shell':  make_shell("A%d_Shell" % idx, c_shell, rough=0.22),
+            'carbon': make_metal("A%d_Carbon" % idx, (0.035, 0.040, 0.050), 0.34, 0.3),
+            'glass':  make_metal("A%d_Glass" % idx, (0.010, 0.012, 0.020), 0.05, 0.0),
+            'accent': make_metal("A%d_Accent" % idx, c_acc, 0.30, 1.0),
+            'glow':   make_emissive("A%d_Glow" % idx, c_glow, 20.0),
+        }
+        col = "Aranha_%d" % idx
+        for k in keys:
+            bm_to_object(bms[k], "Aranha%d_%s" % (idx, k), mats[k], smooth=True, collection=col)
 
 
 def _rnd(i, k=0):
@@ -793,26 +796,46 @@ def build_lander():
     body_r, body_bot, body_top = 0.92, 1.35, 3.30   # corpo do foguete
     nose_top = 4.45
 
-    # --- estagio de descida (octogono dourado) ---
+    # --- estagio de descida (BASE robusta) ---
     add_cylinder(bms['foil'], Z * (ds_z - ds_h / 2), Z * (ds_z + ds_h / 2), ds_r, ds_r, segments=8)
+    # saia/flange inferior mais larga (plataforma de pouso) + friso de acento
+    add_cylinder(bms['foil'], Z * 0.36, Z * 0.56, ds_r * 1.20, ds_r * 1.04, segments=8)
+    add_cylinder(bms['accent'], Z * 0.55, Z * 0.63, ds_r * 1.07, ds_r * 1.07, segments=8)
     # transicao para o corpo
     add_cylinder(bms['metal'], Z * 1.32, Z * 1.62, ds_r * 0.82, body_r, segments=20)
-    # bocal do motor (sino)
-    add_cylinder(bms['metal'], Z * (ds_z - ds_h / 2), Z * (ds_z - ds_h / 2 - 0.75), 0.28, 0.62, segments=20)
-    # tanques de combustivel laterais
-    for sgn in (1, -1):
-        add_sphere(bms['metal'], Vector((sgn * ds_r * 0.95, 0.0, 0.72)), 0.34)
 
-    # --- 4 pernas de pouso (perna + escora + sapata) ---
+    # --- motor: sino grande + interior escuro + garganta + 4 verniers ---
+    add_cylinder(bms['metal'], Z * 0.40, Z * (-0.62), 0.30, 0.80, segments=24)
+    add_cylinder(bms['glass'], Z * 0.30, Z * (-0.42), 0.20, 0.54, segments=20)
+    add_cylinder(bms['metal'], Z * 0.42, Z * 0.30, 0.34, 0.30, segments=16)
     for k in range(4):
         ang = math.radians(45 + k * 90)
         d = Vector((math.cos(ang), math.sin(ang), 0.0))
-        hip = Cc + d * (ds_r * 0.85) - Z * (ds_h * 0.3)
-        pad = d * (ds_r * 1.75)
-        add_cylinder(bms['metal'], hip, pad, 0.08, 0.06, 8)
-        brace = Cc + d * (ds_r * 0.55) + Z * (ds_h * 0.15)
-        add_cylinder(bms['metal'], brace, (hip + pad) * 0.5, 0.05, 0.04, 6)
-        add_cylinder(bms['metal'], pad, pad + Z * 0.09, 0.24, 0.24, 14)
+        vt = d * (ds_r * 0.70) + Z * 0.34
+        add_cylinder(bms['metal'], vt, vt - Z * 0.22, 0.07, 0.11, segments=10)
+
+    # --- 3 tanques de combustivel ao redor da base ---
+    for k in range(3):
+        ang = math.radians(30 + k * 120)
+        d = Vector((math.cos(ang), math.sin(ang), 0.0))
+        tp = d * (ds_r * 1.02) + Z * 0.78
+        add_sphere(bms['metal'], tp, 0.32)
+        add_cylinder(bms['metal'], tp, tp - d * 0.28, 0.05, 0.05, 8)
+
+    # --- 4 pernas de pouso A-frame (stance largo e robusto) ---
+    for k in range(4):
+        ang = math.radians(45 + k * 90)
+        d = Vector((math.cos(ang), math.sin(ang), 0.0))
+        perp = Vector((-d.y, d.x, 0.0))
+        pad = d * (ds_r * 1.95)                              # sapata bem aberta
+        a1 = Cc + d * (ds_r * 0.92) + perp * 0.34 - Z * (ds_h * 0.35)
+        a2 = Cc + d * (ds_r * 0.92) - perp * 0.34 - Z * (ds_h * 0.35)
+        add_cylinder(bms['metal'], a1, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
+        add_cylinder(bms['metal'], a2, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
+        knee = Cc + d * (ds_r * 0.6) - Z * (ds_h * 0.05)
+        add_cylinder(bms['metal'], knee, pad + Z * 0.14, 0.06, 0.05, 8)  # amortecedor
+        add_cylinder(bms['metal'], pad, pad + Z * 0.13, 0.34, 0.34, 16)  # sapata
+        add_cylinder(bms['accent'], pad, pad + Z * 0.05, 0.37, 0.37, 16) # rim da sapata
 
     # --- corpo do foguete (branco) + nariz conico ---
     add_cylinder(bms['shell'], Z * body_bot, Z * body_top, body_r, body_r, segments=28)
