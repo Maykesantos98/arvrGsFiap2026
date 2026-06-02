@@ -123,9 +123,13 @@ footer b{color:var(--ink)}
   border-radius:18px;padding:24px 26px;box-shadow:0 16px 40px rgba(0,0,0,.4)}
 .team-title{text-align:center;color:var(--accent);font-size:13px;letter-spacing:.25em;
   text-transform:uppercase;font-weight:700;margin-bottom:18px}
-.team-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
-.team-list li{display:flex;justify-content:space-between;align-items:center;gap:12px;
-  background:#0b1226;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
-.team-list li span{font-size:14px;color:#eef3ff}
-.team-list li b{font-size:12px;color:var(--accent2);background:#0f1a2e;border:1px solid var(--line);
-  border-radius:999px;padding:4px 10px;white-space:nowrap}
+.team-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.member{display:flex;align-items:center;gap:14px;background:#0b1226;border:1px solid var(--line);
+  border-radius:14px;padding:14px 16px;transition:border-color .2s,transform .2s}
+.member:hover{border-color:var(--accent);transform:translateY(-3px)}
+.member .ava{width:46px;height:46px;border-radius:50%;flex:0 0 46px;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:15px;color:#04121a;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 14px rgba(54,214,255,.25)}
+.member .info{display:flex;flex-direction:column;min-width:0}
+.member .nm{font-size:14px;color:#eef3ff;font-weight:600;line-height:1.25}
+.member .rm{font-size:12px;color:var(--accent2);margin-top:3px;letter-spacing:.06em}
