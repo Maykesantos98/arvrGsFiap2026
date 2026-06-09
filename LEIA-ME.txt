@@ -3,57 +3,30 @@
   Trabalho de Modelagem 3D · Blender 5.1
 ============================================================
 
-SITE AO VIVO (GitHub Pages):
-  https://maykesantos98.github.io/arvrGsFiap2026/
-
-REPOSITÓRIO:
-  https://github.com/Maykesantos98/arvrGsFiap2026
-
-
 ESTRUTURA DO PROJETO
 --------------------
 moon_scene.blend                  Arquivo do Blender (cena completa, editável).
                                   Cada robô tem a sua Collection (Aranha_1..Aranha_4,
                                   com materiais próprios); além de Terreno, Pedras,
                                   Caverna, Terra, Satelite, Foguete, Bandeira,
-                                  Iluminacao e Camera.
-moon_scene.py                     Script-fonte (gera a cena, os 16 renders e o .glb).
+                                  Iluminacao e Camera. Cada objeto é dividido em
+                                  PARTES nomeadas (ex.: Satelite_Antena_Parabolica,
+                                  Foguete_Motor, Aranha1_Pernas).
 Trabalho_Viagens_Espaciais.pdf    Documento para entrega (capa + 16 figuras com legendas).
 README.md / LEIA-ME.txt           Documentação.
 
-docs/                             Site interativo (também é a fonte do GitHub Pages).
+docs/                             Site interativo (história, galeria e visualizador 3D).
     index.html  style.css  script.js  spider-data.js
     models/spider.glb             Aranha exportada (visualizador 3D).
     prints/                       As 16 imagens renderizadas (1920x1080).
     prints/modelagem/             Breakdown por objeto (final/clay/wireframe).
     modelagem.html                Página "making-of" da modelagem.
 
-fonte-pdf/
-    report.html                   Documento que gera o PDF (usa as imagens de docs/prints).
-
 
 COMO ABRIR
 ----------
-- Site online:  https://maykesantos98.github.io/arvrGsFiap2026/
-- Site local:   abra "docs/index.html" no navegador (a história, a galeria e o
-                modelo 3D da aranha funcionam; o Three.js carrega via internet/CDN).
-- Blender:      abra "moon_scene.blend" no Blender 5.1 (ou 4.x).
-- PDF:          abra "Trabalho_Viagens_Espaciais.pdf".
-
-
-COMO REGERAR (opcional)
------------------------
-BLENDER="C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"
-
-Renderizar os 16 prints:
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --shots "$PWD\docs\prints" --save "$PWD\moon_scene.blend"
-Exportar a aranha em .glb:
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --export "$PWD\docs\models\spider.glb"
-Breakdown de um objeto (aranha/foguete/satelite/bandeira):
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --solo foguete --shots "$PWD\docs\prints\modelagem"
-
-OBS 1: use SEMPRE caminhos ABSOLUTOS (ex.: $PWD\...). Em modo background o Blender
-resolve caminhos relativos a partir da raiz do disco (C:\), nao da pasta do projeto.
-OBS 2: rode com --factory-startup (o add-on de usuário "dream_textures" está quebrado
-nesta máquina e trava o modo background sem essa flag).
+- Blender:  abra "moon_scene.blend" no Blender 5.1 (ou 4.x).
+- Site:     abra "docs/index.html" no navegador (a história, a galeria e o
+            modelo 3D da aranha funcionam; o Three.js carrega via internet/CDN).
+- PDF:      abra "Trabalho_Viagens_Espaciais.pdf".
 ============================================================

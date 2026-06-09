@@ -9,8 +9,6 @@
 ![Three.js](https://img.shields.io/badge/3D%20Web-Three.js-000?logo=three.js&logoColor=white)
 ![Tema](https://img.shields.io/badge/Tema-Viagens%20Espaciais-36d6ff)
 
-**🚀 [Ver o site interativo ao vivo »](https://maykesantos98.github.io/arvrGsFiap2026/)**
-
 ![Vista geral da missão](docs/prints/01_hero.png)
 
 </div>
@@ -22,8 +20,8 @@
 Uma missão fictícia de **exploração de cavernas lunares**: **aranhas-robô** autônomas
 percorrem o relevo da Lua, apoiadas por um **foguete-lander** e por um **satélite de
 comunicação** em órbita, sob o olhar da **Terra**. Todos os objetos principais foram
-**modelados de forma autoral por geometria procedural** no Blender (script Python `bpy`),
-com materiais PBR, iluminação de três pontos e gerenciamento de cor AgX.
+**modelados de forma autoral** no Blender, com materiais PBR, iluminação de três pontos
+e gerenciamento de cor AgX.
 
 > Tema da atividade: **Viagens Espaciais** · Ferramenta: **Blender 5.1 / Cycles**
 
@@ -35,9 +33,9 @@ com materiais PBR, iluminação de três pontos e gerenciamento de cor AgX.
 |---|---|
 | 🕷️ **Aranhas-exploradoras** | Corpo compacto, cabeça-sensor com cluster de olhos, faróis, sonda e seis pernas hexápodes arqueadas de três segmentos. |
 | 🚀 **Foguete-lander** | Corpo de foguete com nariz cônico, aletas, janelas e antena, sobre estágio de descida octogonal com pernas, tanques e bocal. |
-| 📡 **Satélite** | Corpo com manta térmica, painéis solares procedurais e antena parabólica. |
+| 📡 **Satélite** | Corpo com louvers térmicos e star-tracker, painéis solares com grade de células e antena parabólica côncava com nervuras e alimentador. |
 | 🇧🇷 **Bandeira do Brasil** | Marco da missão fincado no solo lunar. |
-| 🌑 **Cenário** | Terreno lunar com crateras, caverna com arco de rochas e brilho interno, campo de estrelas/nebulosa e **Terra procedural** (nuvens, atmosfera e luzes de cidade). |
+| 🌑 **Cenário** | Terreno lunar com crateras, caverna com arco de rochas e brilho interno, campo de estrelas/nebulosa e **Terra** procedural (nuvens, atmosfera e luzes de cidade). |
 
 ---
 
@@ -57,9 +55,6 @@ com materiais PBR, iluminação de três pontos e gerenciamento de cor AgX.
 |:---:|:---:|:---:|
 | ![](docs/prints/14_wireframe_cena.png) | ![](docs/prints/15_clay_robo.png) | ![](docs/prints/16_wireframe_robo.png) |
 
-> A galeria completa (16 imagens) e a história animada da expedição estão no
-> **[site interativo](https://maykesantos98.github.io/arvrGsFiap2026/)**.
-
 ---
 
 ## ✨ Site interativo
@@ -75,34 +70,23 @@ com materiais PBR, iluminação de três pontos e gerenciamento de cor AgX.
 
 ```
 .
-├── moon_scene.blend              # Cena Blender (editável, com Collections)
-├── moon_scene.py                 # Script-fonte (gera cena, renders e .glb)
+├── moon_scene.blend              # Cena Blender (editável, com Collections e partes nomeadas)
 ├── Trabalho_Viagens_Espaciais.pdf# Documento (capa + 16 figuras com legendas)
-├── docs/                         # Site interativo (fonte do GitHub Pages)
-│   ├── index.html  style.css  script.js  spider-data.js
-│   ├── models/spider.glb         # Aranha exportada (3D web)
-│   └── prints/                   # 16 renders 1920×1080
-└── fonte-pdf/report.html         # Fonte do PDF
+└── docs/                         # Site interativo
+    ├── index.html  style.css  script.js  spider-data.js
+    ├── models/spider.glb         # Aranha exportada (3D web)
+    └── prints/                   # 16 renders 1920×1080
 ```
 
 ---
 
-## ▶️ Como rodar
+## ▶️ Como abrir
 
-**Site:** abra <https://maykesantos98.github.io/arvrGsFiap2026/> ou `docs/index.html` localmente.
+**Site:** abra `docs/index.html` no navegador.
 
-**Blender:** abra `moon_scene.blend` no Blender 5.1.
-
-**Regerar os renders** (use caminhos **absolutos** — em background o Blender resolve
-caminhos relativos a partir da raiz do disco, não da pasta do projeto):
-```powershell
-blender -b --factory-startup -P moon_scene.py -- --shots "$PWD\docs\prints" --save "$PWD\moon_scene.blend"
-```
-
-**Exportar a aranha 3D (.glb):**
-```powershell
-blender -b --factory-startup -P moon_scene.py -- --export "$PWD\docs\models\spider.glb"
-```
+**Blender:** abra `moon_scene.blend` no Blender 5.1 — cada objeto está em sua própria
+Collection, dividido em partes nomeadas (ex.: `Satelite_Antena_Parabolica`, `Foguete_Motor`,
+`Aranha1_Pernas`), pronto para inspeção em Wireframe / Edit Mode.
 
 ---
 
