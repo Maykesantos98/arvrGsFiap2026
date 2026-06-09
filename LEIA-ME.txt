@@ -46,12 +46,14 @@ COMO REGERAR (opcional)
 BLENDER="C:\Program Files\Blender Foundation\Blender 5.1\blender.exe"
 
 Renderizar os 16 prints:
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --shots "docs\prints" --save "moon_scene.blend"
+  & $BLENDER -b --factory-startup -P moon_scene.py -- --shots "$PWD\docs\prints" --save "$PWD\moon_scene.blend"
 Exportar a aranha em .glb:
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --export "docs\models\spider.glb"
+  & $BLENDER -b --factory-startup -P moon_scene.py -- --export "$PWD\docs\models\spider.glb"
 Breakdown de um objeto (aranha/foguete/satelite/bandeira):
-  & $BLENDER -b --factory-startup -P moon_scene.py -- --solo foguete --shots "docs\prints\modelagem"
+  & $BLENDER -b --factory-startup -P moon_scene.py -- --solo foguete --shots "$PWD\docs\prints\modelagem"
 
-OBS: rode com --factory-startup (o add-on de usuário "dream_textures" está quebrado
+OBS 1: use SEMPRE caminhos ABSOLUTOS (ex.: $PWD\...). Em modo background o Blender
+resolve caminhos relativos a partir da raiz do disco (C:\), nao da pasta do projeto.
+OBS 2: rode com --factory-startup (o add-on de usuário "dream_textures" está quebrado
 nesta máquina e trava o modo background sem essa flag).
 ============================================================

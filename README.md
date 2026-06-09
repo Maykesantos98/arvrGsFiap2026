@@ -93,14 +93,15 @@ com materiais PBR, iluminação de três pontos e gerenciamento de cor AgX.
 
 **Blender:** abra `moon_scene.blend` no Blender 5.1.
 
-**Regerar os renders:**
-```bash
-blender -b --factory-startup -P moon_scene.py -- --shots "docs/prints" --save "moon_scene.blend"
+**Regerar os renders** (use caminhos **absolutos** — em background o Blender resolve
+caminhos relativos a partir da raiz do disco, não da pasta do projeto):
+```powershell
+blender -b --factory-startup -P moon_scene.py -- --shots "$PWD\docs\prints" --save "$PWD\moon_scene.blend"
 ```
 
 **Exportar a aranha 3D (.glb):**
-```bash
-blender -b --factory-startup -P moon_scene.py -- --export "docs/models/spider.glb"
+```powershell
+blender -b --factory-startup -P moon_scene.py -- --export "$PWD\docs\models\spider.glb"
 ```
 
 ---

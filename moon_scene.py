@@ -247,7 +247,7 @@ def build_terrain():
     me.update(calc_edges=True)
     for p in me.polygons:
         p.use_smooth = True
-    ob = bpy.data.objects.new("LunarSurface", me)
+    ob = bpy.data.objects.new("Solo_Lunar", me)
     ob.data.materials.append(make_moon_material())
     link_obj(ob, "Terreno")
     return ob
@@ -469,7 +469,7 @@ def make_earth_material():
 def build_earth():
     bm = bmesh.new()
     _uvsphere(bm, 64, 32, 9.0, Matrix.Identity(4))
-    ob = bm_to_object(bm, "Earth", make_earth_material(), collection="Terra")
+    ob = bm_to_object(bm, "Planeta_Terra", make_earth_material(), collection="Terra")
     ob.location = (-7.0, 72.0, 30.0)
     ob.rotation_euler = (math.radians(18), 0, math.radians(40))
     return ob
@@ -483,10 +483,14 @@ def build_earth():
 LEG_LAYOUT = [(-1, 1), (1, 1), (1, 0), (-1, 0), (-1, -1), (1, -1)]
 
 
-def build_spider(bms, base_x, base_y, facing, s=1.0, phase=0):
-    """Aranha-exploradora: corpo compacto erguido sobre 6 pernas grandes e
-    arqueadas (joelho acima do corpo), cabeca-sensor com cluster de olhos,
-    farois, sonda dianteira e antena."""
+def build_spider(parts, base_x, base_y, facing, s=1.0, phase=0):
+    """Aranha-exploradora dividida em PARTES nomeadas: Corpo (cefalotorax+abdome),
+    Cabeca (visor+olhos+farois), Sonda, Domo_Antena e Pernas (6 hexapodes).
+    Roteia a geometria em 'parts' = {parte: {material: bmesh}} para virar 1 objeto
+    por parte. Materiais: shell, carbon, glass, accent, glow."""
+    def bm(part, mat):
+        return parts.setdefault(part, {}).setdefault(mat, bmesh.new())
+
     F = Vector((math.cos(facing), math.sin(facing), 0.0))   # frente
     R = Vector((math.sin(facing), -math.cos(facing), 0.0))  # direita
     UP = Vector((0.0, 0.0, 1.0))
@@ -494,45 +498,43 @@ def build_spider(bms, base_x, base_y, facing, s=1.0, phase=0):
     body_z = gz + 1.05 * s                                  # postura alta de aranha
     C = Vector((base_x, base_y, body_z))
 
-    # ---- corpo compacto (cefalotorax) ----
-    add_ellipsoid(bms['shell'], C, (0.55 * s, 0.74 * s, 0.42 * s), forward=F, useg=32, vseg=20)
-    add_ellipsoid(bms['carbon'], C - UP * (0.16 * s), (0.52 * s, 0.70 * s, 0.26 * s), forward=F, useg=28, vseg=14)
-    # abdome traseiro (segundo segmento, ar de aranha)
-    add_ellipsoid(bms['shell'], C - F * (0.62 * s) + UP * (0.02 * s),
+    # ---- Corpo: cefalotorax + ventre + abdome traseiro ----
+    add_ellipsoid(bm("Corpo", "shell"), C, (0.55 * s, 0.74 * s, 0.42 * s), forward=F, useg=32, vseg=20)
+    add_ellipsoid(bm("Corpo", "carbon"), C - UP * (0.16 * s), (0.52 * s, 0.70 * s, 0.26 * s), forward=F, useg=28, vseg=14)
+    add_ellipsoid(bm("Corpo", "shell"), C - F * (0.62 * s) + UP * (0.02 * s),
                   (0.42 * s, 0.50 * s, 0.36 * s), forward=F, useg=28, vseg=16)
 
-    # ---- cabeca-sensor frontal (visor escuro + cluster de 3 olhos) ----
+    # ---- Cabeca: visor escuro + cluster de 3 olhos + 2 farois ----
     head = C + F * (0.52 * s) + UP * (0.06 * s)
-    add_ellipsoid(bms['glass'], head, (0.34 * s, 0.30 * s, 0.30 * s), forward=F, useg=24, vseg=16)
+    add_ellipsoid(bm("Cabeca", "glass"), head, (0.34 * s, 0.30 * s, 0.30 * s), forward=F, useg=24, vseg=16)
     for off in (-0.15, 0.0, 0.15):
         eye = head + F * (0.20 * s) + R * (off * s) + UP * (0.03 * s)
-        add_sphere(bms['glow'], eye, 0.052 * s)
-    # 2 farois de exploracao
+        add_sphere(bm("Cabeca", "glow"), eye, 0.052 * s)
     for sgn in (1, -1):
         hl = C + F * (0.46 * s) + R * (sgn * 0.40 * s) - UP * (0.02 * s)
-        add_cylinder(bms['carbon'], hl, hl + F * (0.05 * s), 0.07 * s, 0.07 * s, segments=10)
-        add_sphere(bms['glow'], hl + F * (0.07 * s), 0.055 * s)
+        add_cylinder(bm("Cabeca", "carbon"), hl, hl + F * (0.05 * s), 0.07 * s, 0.07 * s, segments=10)
+        add_sphere(bm("Cabeca", "glow"), hl + F * (0.07 * s), 0.055 * s)
 
-    # ---- sonda articulada dianteira (instrumento do explorador) ----
+    # ---- Sonda articulada dianteira (instrumento do explorador) ----
     p0 = C + F * (0.40 * s) - UP * (0.06 * s)
     p1 = p0 + F * (0.42 * s) - UP * (0.34 * s)
-    add_cylinder(bms['carbon'], p0, p1, 0.045 * s, 0.030 * s, segments=8)
-    add_sphere(bms['accent'], p0, 0.06 * s)
-    add_sphere(bms['glow'], p1, 0.045 * s)
+    add_cylinder(bm("Sonda", "carbon"), p0, p1, 0.045 * s, 0.030 * s, segments=8)
+    add_sphere(bm("Sonda", "accent"), p0, 0.06 * s)
+    add_sphere(bm("Sonda", "glow"), p1, 0.045 * s)
 
-    # ---- gear no topo: domo lidar + antena ----
+    # ---- Domo_Antena no topo: domo lidar + antena ----
     dome = C + UP * (0.42 * s) - F * (0.10 * s)
-    add_ellipsoid(bms['glass'], dome, (0.20 * s, 0.22 * s, 0.16 * s), forward=F, useg=18, vseg=12)
+    add_ellipsoid(bm("Domo_Antena", "glass"), dome, (0.20 * s, 0.22 * s, 0.16 * s), forward=F, useg=18, vseg=12)
     a0 = C + UP * (0.42 * s) - F * (0.34 * s)
     a1 = a0 + UP * (0.46 * s) - F * (0.06 * s)
-    add_cylinder(bms['carbon'], a0, a1, 0.018 * s, 0.010 * s, segments=6)
-    add_sphere(bms['glow'], a1, 0.030 * s)
+    add_cylinder(bm("Domo_Antena", "carbon"), a0, a1, 0.018 * s, 0.010 * s, segments=6)
+    add_sphere(bm("Domo_Antena", "glow"), a1, 0.030 * s)
 
-    # ---- 6 pernas grandes de aranha (joelho alto e para fora) ----
+    # ---- Pernas: 6 pernas grandes de aranha (joelho alto e para fora) ----
     for idx, (side, j) in enumerate(LEG_LAYOUT):
         swing = ((idx + phase) % 2 == 0)
         hip = C + F * (j * 0.34 * s) + R * (side * 0.46 * s) - UP * (0.06 * s)
-        add_sphere(bms['accent'], hip, 0.11 * s)             # junta do ombro (coxa)
+        add_sphere(bm("Pernas", "accent"), hip, 0.11 * s)             # junta do ombro (coxa)
 
         outdir = (R * side + F * (j * 0.45)).normalized()
         reach = 1.65 * s                                     # passada larga
@@ -546,10 +548,10 @@ def build_spider(bms, base_x, base_y, facing, s=1.0, phase=0):
         knee = Vector((hip.x + outdir.x * 0.55 * s,
                        hip.y + outdir.y * 0.55 * s,
                        body_z + (0.62 if swing else 0.52) * s))
-        add_cylinder(bms['carbon'], hip, knee, 0.075 * s, 0.058 * s, segments=12)   # femur
-        add_sphere(bms['glow'], knee, 0.058 * s)             # joelho cyan
-        add_cylinder(bms['carbon'], knee, foot, 0.055 * s, 0.025 * s, segments=10)  # tibia
-        add_sphere(bms['carbon'], foot, 0.05 * s)            # pe
+        add_cylinder(bm("Pernas", "carbon"), hip, knee, 0.075 * s, 0.058 * s, segments=12)   # femur
+        add_sphere(bm("Pernas", "glow"), knee, 0.058 * s)             # joelho cyan
+        add_cylinder(bm("Pernas", "carbon"), knee, foot, 0.055 * s, 0.025 * s, segments=10)  # tibia
+        add_sphere(bm("Pernas", "carbon"), foot, 0.05 * s)            # pe
 
 
 def build_robots():
@@ -571,10 +573,9 @@ def build_robots():
         (-2.2, 10.8, 0.80, 1, face_cave(-2.2, 10.8),
          (0.87, 0.84, 0.93), (0.55, 0.10, 0.55), (0.85, 0.35, 1.00)),   # 4 magenta/roxo
     ]
-    keys = ('shell', 'carbon', 'glass', 'accent', 'glow')
     for idx, (rx, ry, sc, ph, fac, c_shell, c_acc, c_glow) in enumerate(robots, start=1):
-        bms = {k: bmesh.new() for k in keys}
-        build_spider(bms, rx, ry, fac, s=sc, phase=ph)
+        parts = {}
+        build_spider(parts, rx, ry, fac, s=sc, phase=ph)
         mats = {
             'shell':  make_shell("A%d_Shell" % idx, c_shell, rough=0.22),
             'carbon': make_metal("A%d_Carbon" % idx, (0.035, 0.040, 0.050), 0.34, 0.3),
@@ -583,8 +584,10 @@ def build_robots():
             'glow':   make_emissive("A%d_Glow" % idx, c_glow, 20.0),
         }
         col = "Aranha_%d" % idx
-        for k in keys:
-            bm_to_object(bms[k], "Aranha%d_%s" % (idx, k), mats[k], smooth=True, collection=col)
+        # 1 objeto por PARTE (Corpo, Cabeca, Sonda, Domo_Antena, Pernas)
+        for part_name, layers_dict in parts.items():
+            layers = [(b, mats[mk]) for mk, b in layers_dict.items()]
+            make_part("Aranha%d_%s" % (idx, part_name), layers, col, smooth=True)
 
 
 def _rnd(i, k=0):
@@ -627,7 +630,7 @@ def build_rocks():
              @ Matrix.Rotation(_rnd(i, 9) * math.tau, 4, 'Z')
              @ Matrix.Diagonal((sx, sy, sz, 1.0)))
         _icosphere(bm, 2 if boulder else 1, 1.0, M)
-    bm_to_object(bm, "Rocks", make_rock_material(), collection="Pedras")
+    bm_to_object(bm, "Pedras_Espalhadas", make_rock_material(), collection="Pedras")
 
 
 def build_cave():
@@ -640,13 +643,13 @@ def build_cave():
     void = bmesh.new()
     add_ellipsoid(void, Vector((cx, cy, bottom + 0.10)), (cr * 0.85, cr * 0.85, 0.35),
                   useg=32, vseg=14)
-    bm_to_object(void, "CaveVoid", make_void_material(), collection="Caverna")
+    bm_to_object(void, "Caverna_Vazio", make_void_material(), collection="Caverna")
 
     # brilho interno fraco (a abertura "respira" luz cyan)
     glow = bmesh.new()
     add_ellipsoid(glow, Vector((cx, cy, bottom + 0.55)), (cr * 0.55, cr * 0.55, 0.18),
                   useg=24, vseg=10)
-    bm_to_object(glow, "CaveGlow", make_emissive("CaveGlow", (0.10, 0.55, 0.8), 2.2),
+    bm_to_object(glow, "Caverna_Brilho", make_emissive("CaveGlow", (0.10, 0.55, 0.8), 2.2),
                  collection="Caverna")
 
     # anel de pedregulhos na borda (maiores, mais lisos)
@@ -675,19 +678,44 @@ def build_cave():
              @ Matrix.Rotation(_rnd(i, 22) * math.tau, 4, 'Z')
              @ Matrix.Diagonal((sz * 1.4, sz * 1.1, sz * 0.9, 1.0)))
         _icosphere(rim, 2, 1.0, M)
-    bm_to_object(rim, "CaveRim", make_rock_material(), collection="Caverna")
+    bm_to_object(rim, "Caverna_Arco_Rochas", make_rock_material(), collection="Caverna")
 
 
 # =========================================================================== #
 # Objetos espaciais autorais: satelite, modulo de pouso, bandeira
 # =========================================================================== #
-def finalize_parts(bms, mats, names, collection, loc=(0, 0, 0), rot=(0, 0, 0), smooth_map=None):
-    """Cria 1 objeto por grupo de material e aplica transform (origem = construcao)."""
-    for k, bm in bms.items():
-        sm = True if not smooth_map else smooth_map.get(k, True)
-        ob = bm_to_object(bm, names.get(k, k), mats[k], smooth=sm, collection=collection)
-        ob.location = loc
-        ob.rotation_euler = rot
+def make_part(name, layers, collection, smooth=True, loc=(0, 0, 0), rot=(0, 0, 0)):
+    """Cria UM objeto nomeado (uma 'parte' logica do modelo) a partir de varias
+    camadas (bmesh, material). Cada material distinto vira um slot do objeto, de
+    modo que a modelagem possa ser avaliada PARTE A PARTE com nomes claros.
+    Libera os bmesh de entrada e aplica o transform (origem = ponto de construcao)."""
+    me = bpy.data.meshes.new(name)
+    bm = bmesh.new()
+    mats = []
+    for sub_bm, mat in layers:
+        if mat not in mats:
+            mats.append(mat)
+        idx = mats.index(mat)
+        tmp = bpy.data.meshes.new("_tmp_part")
+        sub_bm.to_mesh(tmp)
+        sub_bm.free()
+        for poly in tmp.polygons:
+            poly.material_index = idx
+        bm.from_mesh(tmp)
+        bpy.data.meshes.remove(tmp)
+    bm.to_mesh(me)
+    bm.free()
+    me.update()
+    if smooth:
+        for poly in me.polygons:
+            poly.use_smooth = True
+    ob = bpy.data.objects.new(name, me)
+    for mat in mats:
+        ob.data.materials.append(mat)
+    ob.location = loc
+    ob.rotation_euler = rot
+    link_obj(ob, collection)
+    return ob
 
 
 def make_solar():
@@ -743,86 +771,181 @@ def make_flag_material():
     return m
 
 
+def _parabolic_dish(bm, center, radius, depth, forward, rings=12, seg=48):
+    """Prato parabolico CONCAVO gerado por aneis (z = depth*(r/R)^2). A abertura
+    aponta para 'forward'. Retorna (foco, [pontos de borda], centro_do_dorso) em
+    coordenadas de construcao, para posicionar feed horn, tripe e nervuras."""
+    center = Vector(center); forward = Vector(forward).normalized()
+    rot = forward.to_track_quat('Z', 'Y').to_matrix().to_4x4()
+    M = Matrix.Translation(center) @ rot
+
+    def W(p):
+        return (M @ Vector((p[0], p[1], p[2], 1.0))).to_3d()
+
+    tmp = bmesh.new()
+    cen = tmp.verts.new((0.0, 0.0, 0.0))
+    rings_v = []
+    for k in range(1, rings + 1):
+        r = radius * k / rings
+        z = depth * (k / rings) ** 2
+        row = [tmp.verts.new((r * math.cos(2 * math.pi * s / seg),
+                              r * math.sin(2 * math.pi * s / seg), z))
+               for s in range(seg)]
+        rings_v.append(row)
+    first = rings_v[0]
+    for s in range(seg):                     # cap central (triangulos)
+        tmp.faces.new((cen, first[s], first[(s + 1) % seg]))
+    for k in range(len(rings_v) - 1):        # quads entre aneis
+        a, b = rings_v[k], rings_v[k + 1]
+        for s in range(seg):
+            s2 = (s + 1) % seg
+            tmp.faces.new((a[s], a[s2], b[s2], b[s]))
+    bmesh.ops.transform(tmp, matrix=M, space=Matrix.Identity(4), verts=tmp.verts)
+    bmesh.ops.recalc_face_normals(tmp, faces=list(tmp.faces))
+    merge_bm(bm, tmp)
+
+    f = radius * radius / (4.0 * depth)      # distancia focal da parabola
+    focus = W((0.0, 0.0, f))
+    rim = [W((radius * math.cos(2 * math.pi * s / 12),
+              radius * math.sin(2 * math.pi * s / 12), depth)) for s in range(12)]
+    back_center = W((0.0, 0.0, -0.03))
+    return focus, rim, back_center
+
+
+def _solar_wing(sgn, inner_x, span_x, span_y, cols=6, rows=3, gap=0.05):
+    """Uma asa de painel solar. Retorna (bm_estrutura, bm_celulas):
+    estrutura = braco do corpo + spar + moldura (metal); celulas = grade cols x rows."""
+    Y = Vector((0, 1, 0))
+    z0 = 0.0
+    frame = bmesh.new()
+    cells = bmesh.new()
+    cx0, far_x = inner_x, inner_x + span_x
+    add_cylinder(frame, Vector((0.6 * sgn, 0, z0)), Vector((cx0 * sgn, 0, z0)), 0.06, 0.06, 8)   # braco
+    add_cylinder(frame, Vector((cx0 * sgn, 0, z0)), Vector((far_x * sgn, 0, z0)), 0.045, 0.045, 6)  # spar
+    fcx = (cx0 + far_x) / 2.0
+    add_box(frame, Vector((fcx * sgn, 0, z0)),
+            (span_x + 1.5 * gap, span_y + 1.5 * gap, 0.04), forward=Y, bevel=0.0)  # moldura
+    cw = (span_x - (cols + 1) * gap) / cols
+    ch = (span_y - (rows + 1) * gap) / rows
+    for c in range(cols):
+        for r in range(rows):
+            px = cx0 + gap + (cw + gap) * c + cw / 2.0
+            py = -span_y / 2.0 + gap + (ch + gap) * r + ch / 2.0
+            add_box(cells, Vector((px * sgn, py, z0 + 0.05)), (cw, ch, 0.05), forward=Y, bevel=0.0)
+    return frame, cells
+
+
 def build_satellite():
-    keys = ('foil', 'panel', 'dish', 'metal', 'light')
-    bms = {k: bmesh.new() for k in keys}
+    """Satelite de comunicacao em PARTES nomeadas (Collection 'Satelite'):
+    Corpo, Modulo_Superior, Louvers_Termicos, Star_Tracker, Painel_Solar_Esquerdo/
+    Direito, Antena_Parabolica, Alimentador, Antena_Mastro e Luzes."""
     O = Vector((0, 0, 0))
     X = Vector((1, 0, 0)); Y = Vector((0, 1, 0)); Z = Vector((0, 0, 1))
+    LOC = (14.0, 34.0, 15.0)
+    ROT = (math.radians(18), math.radians(-26), math.radians(12))
+    COL = "Satelite"
 
-    # corpo (bus) dourado + modulo superior
-    add_box(bms['foil'], O, (1.2, 1.6, 1.2), forward=Y, bevel=0.08)
-    add_box(bms['metal'], O + Z * 0.9, (0.7, 0.9, 0.5), forward=Y, bevel=0.05)
+    m_foil = make_metal("SatFoil", (0.86, 0.62, 0.20), 0.40, 1.0)
+    m_panel = make_solar()
+    m_dish = make_metal("SatDish", (0.86, 0.87, 0.90), 0.16, 0.6)
+    m_metal = make_metal("SatMetal", (0.55, 0.57, 0.62), 0.30, 1.0)
+    m_accent = make_metal("SatAccent", (0.80, 0.55, 0.16), 0.35, 1.0)
+    m_light = make_emissive("SatLight", (0.3, 1.0, 0.4), 20.0)
 
-    # bracos + paineis solares (eixo X)
-    for sgn in (1, -1):
-        add_cylinder(bms['metal'], O + X * (0.6 * sgn), O + X * (1.6 * sgn), 0.06, 0.06, 8)
-        pc = O + X * (3.1 * sgn)
-        add_box(bms['metal'], pc, (2.95, 1.55, 0.04), forward=Y, bevel=0.0)   # moldura
-        add_box(bms['panel'], pc, (2.80, 1.40, 0.06), forward=Y, bevel=0.0)   # celulas
+    def part(name, layers, smooth):
+        make_part("Satelite_" + name, layers, COL, smooth=smooth, loc=LOC, rot=ROT)
 
-    # antena parabolica (frente -Y)
-    dish_c = O + Y * (-1.1) + Z * 0.2
-    add_ellipsoid(bms['dish'], dish_c, (0.85, 0.18, 0.85), forward=Y)
-    add_cylinder(bms['metal'], dish_c, dish_c + Y * (-0.5), 0.03, 0.03, 6)
-    add_cylinder(bms['metal'], dish_c + Y * (-0.5), dish_c + Y * (-0.56), 0.10, 0.04, 8)
+    # 1. Corpo (bus dourado, manta termica)
+    bm = bmesh.new(); add_box(bm, O, (1.25, 1.70, 1.25), forward=Y, bevel=0.10)
+    part("Corpo", [(bm, m_foil)], False)
 
-    # antenas finas + luzes
-    add_cylinder(bms['metal'], O + Z * 1.15, O + Z * 1.95, 0.02, 0.012, 6)
-    add_sphere(bms['light'], O + Z * 1.97, 0.05)
-    add_sphere(bms['light'], O + Y * (-0.82) + Z * 0.5, 0.04)
+    # 2. Modulo superior (eletronica)
+    bm = bmesh.new(); add_box(bm, O + Z * 0.95, (0.72, 0.92, 0.55), forward=Y, bevel=0.06)
+    part("Modulo_Superior", [(bm, m_metal)], False)
 
-    mats = {'foil': make_metal("SatFoil", (0.86, 0.62, 0.20), 0.38, 1.0),
-            'panel': make_solar(),
-            'dish': make_metal("SatDish", (0.82, 0.83, 0.85), 0.22, 0.5),
-            'metal': make_metal("SatMetal", (0.58, 0.60, 0.64), 0.30, 1.0),
-            'light': make_emissive("SatLight", (0.3, 1.0, 0.4), 20.0)}
-    names = {'foil': 'SatBody', 'panel': 'SatPanels', 'dish': 'SatDish',
-             'metal': 'SatStruts', 'light': 'SatLights'}
-    finalize_parts(bms, mats, names, "Satelite", loc=(14.0, 34.0, 15.0),
-                   rot=(math.radians(18), math.radians(-26), math.radians(12)),
-                   smooth_map={'foil': False, 'panel': False, 'dish': True,
-                               'metal': True, 'light': True})
+    # 3. Louvers termicos (radiador, face +Y)
+    bm = bmesh.new()
+    for i in range(4):
+        add_box(bm, O + Y * 0.86 + Z * (-0.55 + i * 0.36), (1.05, 0.04, 0.16), forward=Y, bevel=0.0)
+    part("Louvers_Termicos", [(bm, m_accent)], False)
+
+    # 4. Star-tracker (sensor de estrelas)
+    bm = bmesh.new(); add_box(bm, O + Z * 1.35 + X * 0.30, (0.22, 0.28, 0.32), forward=Y, bevel=0.03)
+    part("Star_Tracker", [(bm, m_metal)], False)
+
+    # 5/6. Paineis solares (uma asa = um objeto: moldura metal + grade de celulas)
+    for sgn, nm in ((1, "Direito"), (-1, "Esquerdo")):
+        frame, cells = _solar_wing(sgn, inner_x=1.55, span_x=3.0, span_y=1.7, cols=6, rows=3)
+        part("Painel_Solar_" + nm, [(frame, m_metal), (cells, m_panel)], False)
+
+    # 7. Antena parabolica (prato concavo + nervuras radiais + braco de suporte)
+    dish_c = O + Y * (-1.25) + Z * 0.18
+    R, depth = 1.0, 0.34
+    bm_dish = bmesh.new()
+    focus, rim, back_c = _parabolic_dish(bm_dish, dish_c, R, depth, forward=-Y)
+    bm_rib = bmesh.new()
+    add_cylinder(bm_rib, O + Y * (-0.85) + Z * 0.18, back_c, 0.09, 0.09, 10)   # braco/hub
+    for p in rim:                                                              # nervuras
+        add_cylinder(bm_rib, back_c, p, 0.02, 0.012, 5)
+    part("Antena_Parabolica", [(bm_dish, m_dish), (bm_rib, m_metal)], True)
+
+    # 8. Alimentador (feed horn no foco + tripe de sustentacao)
+    bm = bmesh.new()
+    add_cylinder(bm, Vector(focus), Vector(focus) + Y * 0.22, 0.05, 0.11, 12)
+    for p in (rim[0], rim[4], rim[8]):
+        add_cylinder(bm, p, Vector(focus), 0.014, 0.014, 4)
+    part("Alimentador", [(bm, m_metal)], True)
+
+    # 9. Mastro de antena (haste superior)
+    bm = bmesh.new(); add_cylinder(bm, O + Z * 1.20, O + Z * 2.00, 0.02, 0.012, 6)
+    part("Antena_Mastro", [(bm, m_metal)], True)
+
+    # 10. Luzes de status (topo do mastro + foco da antena)
+    bm = bmesh.new()
+    add_sphere(bm, O + Z * 2.02, 0.05)
+    add_sphere(bm, Vector(focus) + Y * 0.12, 0.05)
+    part("Luzes", [(bm, m_light)], True)
 
 
 def build_lander():
-    """Foguete-lander: estagio de descida octogonal (dourado) com pernas, bocal e
-    tanques + corpo de foguete branco alto com nariz conico, janelas, aletas,
-    faixas e antena."""
-    keys = ('foil', 'metal', 'accent', 'glow', 'shell', 'glass')
-    bms = {k: bmesh.new() for k in keys}
+    """Foguete-lander em PARTES nomeadas (Collection 'Foguete'): Estagio_Descida,
+    Corpo, Motor, Tanques, Pernas, Janelas, Aletas, Faixas e Antena_Luzes.
+    Roteia a geometria em 'parts' = {parte: {material: bmesh}}."""
+    parts = {}
+
+    def bm(part, mat):
+        return parts.setdefault(part, {}).setdefault(mat, bmesh.new())
+
     Z = Vector((0, 0, 1))
     ds_r, ds_h, ds_z = 1.35, 1.0, 0.85          # estagio de descida
     Cc = Z * ds_z
     body_r, body_bot, body_top = 0.92, 1.35, 3.30   # corpo do foguete
     nose_top = 4.45
 
-    # --- estagio de descida (BASE robusta) ---
-    add_cylinder(bms['foil'], Z * (ds_z - ds_h / 2), Z * (ds_z + ds_h / 2), ds_r, ds_r, segments=8)
-    # saia/flange inferior mais larga (plataforma de pouso) + friso de acento
-    add_cylinder(bms['foil'], Z * 0.36, Z * 0.56, ds_r * 1.20, ds_r * 1.04, segments=8)
-    add_cylinder(bms['accent'], Z * 0.55, Z * 0.63, ds_r * 1.07, ds_r * 1.07, segments=8)
-    # transicao para o corpo
-    add_cylinder(bms['metal'], Z * 1.32, Z * 1.62, ds_r * 0.82, body_r, segments=20)
+    # --- Estagio_Descida (BASE robusta octogonal + saia + friso) ---
+    add_cylinder(bm("Estagio_Descida", "foil"), Z * (ds_z - ds_h / 2), Z * (ds_z + ds_h / 2), ds_r, ds_r, segments=8)
+    add_cylinder(bm("Estagio_Descida", "foil"), Z * 0.36, Z * 0.56, ds_r * 1.20, ds_r * 1.04, segments=8)
+    add_cylinder(bm("Estagio_Descida", "accent"), Z * 0.55, Z * 0.63, ds_r * 1.07, ds_r * 1.07, segments=8)
 
-    # --- motor: sino grande + interior escuro + garganta + 4 verniers ---
-    add_cylinder(bms['metal'], Z * 0.40, Z * (-0.62), 0.30, 0.80, segments=24)
-    add_cylinder(bms['glass'], Z * 0.30, Z * (-0.42), 0.20, 0.54, segments=20)
-    add_cylinder(bms['metal'], Z * 0.42, Z * 0.30, 0.34, 0.30, segments=16)
+    # --- Motor: sino grande + interior escuro + garganta + 4 verniers ---
+    add_cylinder(bm("Motor", "metal"), Z * 0.40, Z * (-0.62), 0.30, 0.80, segments=24)
+    add_cylinder(bm("Motor", "glass"), Z * 0.30, Z * (-0.42), 0.20, 0.54, segments=20)
+    add_cylinder(bm("Motor", "metal"), Z * 0.42, Z * 0.30, 0.34, 0.30, segments=16)
     for k in range(4):
         ang = math.radians(45 + k * 90)
         d = Vector((math.cos(ang), math.sin(ang), 0.0))
         vt = d * (ds_r * 0.70) + Z * 0.34
-        add_cylinder(bms['metal'], vt, vt - Z * 0.22, 0.07, 0.11, segments=10)
+        add_cylinder(bm("Motor", "metal"), vt, vt - Z * 0.22, 0.07, 0.11, segments=10)
 
-    # --- 3 tanques de combustivel ao redor da base ---
+    # --- Tanques: 3 tanques de combustivel ao redor da base ---
     for k in range(3):
         ang = math.radians(30 + k * 120)
         d = Vector((math.cos(ang), math.sin(ang), 0.0))
         tp = d * (ds_r * 1.02) + Z * 0.78
-        add_sphere(bms['metal'], tp, 0.32)
-        add_cylinder(bms['metal'], tp, tp - d * 0.28, 0.05, 0.05, 8)
+        add_sphere(bm("Tanques", "metal"), tp, 0.32)
+        add_cylinder(bm("Tanques", "metal"), tp, tp - d * 0.28, 0.05, 0.05, 8)
 
-    # --- 4 pernas de pouso A-frame (stance largo e robusto) ---
+    # --- Pernas: 4 pernas de pouso A-frame (stance largo) ---
     for k in range(4):
         ang = math.radians(45 + k * 90)
         d = Vector((math.cos(ang), math.sin(ang), 0.0))
@@ -830,42 +953,43 @@ def build_lander():
         pad = d * (ds_r * 1.95)                              # sapata bem aberta
         a1 = Cc + d * (ds_r * 0.92) + perp * 0.34 - Z * (ds_h * 0.35)
         a2 = Cc + d * (ds_r * 0.92) - perp * 0.34 - Z * (ds_h * 0.35)
-        add_cylinder(bms['metal'], a1, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
-        add_cylinder(bms['metal'], a2, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
+        add_cylinder(bm("Pernas", "metal"), a1, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
+        add_cylinder(bm("Pernas", "metal"), a2, pad + Z * 0.10, 0.075, 0.05, 8)   # montante A
         knee = Cc + d * (ds_r * 0.6) - Z * (ds_h * 0.05)
-        add_cylinder(bms['metal'], knee, pad + Z * 0.14, 0.06, 0.05, 8)  # amortecedor
-        add_cylinder(bms['metal'], pad, pad + Z * 0.13, 0.34, 0.34, 16)  # sapata
-        add_cylinder(bms['accent'], pad, pad + Z * 0.05, 0.37, 0.37, 16) # rim da sapata
+        add_cylinder(bm("Pernas", "metal"), knee, pad + Z * 0.14, 0.06, 0.05, 8)  # amortecedor
+        add_cylinder(bm("Pernas", "metal"), pad, pad + Z * 0.13, 0.34, 0.34, 16)  # sapata
+        add_cylinder(bm("Pernas", "accent"), pad, pad + Z * 0.05, 0.37, 0.37, 16) # rim da sapata
 
-    # --- corpo do foguete (branco) + nariz conico ---
-    add_cylinder(bms['shell'], Z * body_bot, Z * body_top, body_r, body_r, segments=28)
-    add_cylinder(bms['shell'], Z * body_top, Z * nose_top, body_r, 0.0, segments=28)
+    # --- Corpo: transicao + cilindro branco + nariz conico ---
+    add_cylinder(bm("Corpo", "metal"), Z * 1.32, Z * 1.62, ds_r * 0.82, body_r, segments=20)  # colar
+    add_cylinder(bm("Corpo", "shell"), Z * body_bot, Z * body_top, body_r, body_r, segments=28)
+    add_cylinder(bm("Corpo", "shell"), Z * body_top, Z * nose_top, body_r, 0.0, segments=28)
 
-    # janelas (vidro) em volta do corpo
+    # --- Janelas (vidro) em volta do corpo ---
     for k in range(3):
         ang = math.radians(60 + k * 60)
         wd = Vector((math.cos(ang), math.sin(ang), 0.0))
         wc = wd * body_r + Z * 2.55
-        add_cylinder(bms['glass'], wc, wc + wd * 0.04, 0.13, 0.13, segments=14)
+        add_cylinder(bm("Janelas", "glass"), wc, wc + wd * 0.04, 0.13, 0.13, segments=14)
 
-    # aletas (fins)
+    # --- Aletas (fins) + luz na ponta ---
     for k in range(4):
         ang = math.radians(45 + k * 90)
         d = Vector((math.cos(ang), math.sin(ang), 0.0))
-        add_box(bms['metal'], d * (body_r + 0.26) + Z * 1.95, (0.05, 0.7, 0.95), forward=d, bevel=0.02)
-        add_sphere(bms['glow'], d * (body_r + 0.62) + Z * 1.52, 0.04)   # luz na ponta
+        add_box(bm("Aletas", "metal"), d * (body_r + 0.26) + Z * 1.95, (0.05, 0.7, 0.95), forward=d, bevel=0.02)
+        add_sphere(bm("Aletas", "glow"), d * (body_r + 0.62) + Z * 1.52, 0.04)
 
-    # faixas de acento (laranja)
-    add_cylinder(bms['accent'], Z * 1.33, Z * 1.46, ds_r * 1.005, ds_r * 1.005, segments=8)
-    add_cylinder(bms['accent'], Z * 3.10, Z * 3.24, body_r * 1.02, body_r * 1.02, segments=28)
+    # --- Faixas de acento (laranja) ---
+    add_cylinder(bm("Faixas", "accent"), Z * 1.33, Z * 1.46, ds_r * 1.005, ds_r * 1.005, segments=8)
+    add_cylinder(bm("Faixas", "accent"), Z * 3.10, Z * 3.24, body_r * 1.02, body_r * 1.02, segments=28)
 
-    # antena no nariz + luzes de navegacao no estagio de descida
-    add_cylinder(bms['metal'], Z * nose_top, Z * (nose_top + 0.4), 0.02, 0.012, 6)
-    add_sphere(bms['glow'], Z * (nose_top + 0.42), 0.05)
+    # --- Antena_Luzes: antena no nariz + luzes de navegacao ---
+    add_cylinder(bm("Antena_Luzes", "metal"), Z * nose_top, Z * (nose_top + 0.4), 0.02, 0.012, 6)
+    add_sphere(bm("Antena_Luzes", "glow"), Z * (nose_top + 0.42), 0.05)
     for k in range(6):
         ang = math.radians(k * 60)
         lp = Cc + Vector((math.cos(ang) * ds_r * 1.02, math.sin(ang) * ds_r * 1.02, 0.18))
-        add_sphere(bms['glow'], lp, 0.04)
+        add_sphere(bm("Antena_Luzes", "glow"), lp, 0.04)
 
     mats = {'foil': make_metal("LanderFoil", (0.86, 0.62, 0.20), 0.40, 1.0),
             'metal': make_metal("LanderMetal", (0.55, 0.57, 0.61), 0.32, 1.0),
@@ -873,13 +997,16 @@ def build_lander():
             'glow': make_emissive("LanderLight", (0.3, 1.0, 0.5), 18.0),
             'shell': make_shell("RocketShell", (0.88, 0.89, 0.92), rough=0.25),
             'glass': make_metal("RocketGlass", (0.02, 0.05, 0.12), 0.06, 0.0)}
-    names = {'foil': 'RocketDescent', 'metal': 'RocketStruct', 'accent': 'RocketTrim',
-             'glow': 'RocketLights', 'shell': 'RocketBody', 'glass': 'RocketWindows'}
+    smooth = {'Estagio_Descida': False, 'Corpo': True, 'Motor': True, 'Tanques': True,
+              'Pernas': True, 'Janelas': True, 'Aletas': True, 'Faixas': False,
+              'Antena_Luzes': True}
     lx, ly = 8.0, 7.0
-    finalize_parts(bms, mats, names, "Foguete", loc=(lx, ly, terrain_height(lx, ly)),
-                   rot=(0, 0, math.radians(18)),
-                   smooth_map={'foil': False, 'metal': True, 'accent': False,
-                               'glow': True, 'shell': True, 'glass': True})
+    LOC = (lx, ly, terrain_height(lx, ly))
+    ROT = (0, 0, math.radians(18))
+    for part_name, layers_dict in parts.items():
+        layers = [(b, mats[mk]) for mk, b in layers_dict.items()]
+        make_part("Foguete_" + part_name, layers, "Foguete",
+                  smooth=smooth.get(part_name, True), loc=LOC, rot=ROT)
 
 
 def _flag_poly(name, verts, faces, color, loc, rot, emit=0.6):
@@ -914,7 +1041,7 @@ def build_flag():
     bm = bmesh.new()
     add_cylinder(bm, Vector((0, 0, 0)), Vector((0, 0, 1.7)), 0.03, 0.025, 8)
     add_sphere(bm, Vector((0, 0, 1.72)), 0.05)
-    pole = bm_to_object(bm, "FlagPole", make_metal("FlagPole", (0.6, 0.62, 0.66), 0.3, 1.0),
+    pole = bm_to_object(bm, "Bandeira_Mastro", make_metal("FlagPole", (0.6, 0.62, 0.66), 0.3, 1.0),
                         smooth=True, collection="Bandeira")
     pole.location = loc
     pole.rotation_euler = rot
@@ -931,33 +1058,40 @@ def build_flag():
     WHITE = (0.90, 0.92, 0.95)
 
     # campo verde
-    _flag_poly("Flag_Verde",
+    _flag_poly("Bandeira_Campo_Verde",
                [(x0, 0.000, z0), (x1, 0.000, z0), (x1, 0.000, z1), (x0, 0.000, z1)],
                [(0, 1, 2, 3)], GREEN, loc, rot)
 
-    # camadas coloridas nos DOIS lados do pano (visivel de qualquer angulo)
+    # camadas coloridas: frente E verso do pano no MESMO objeto por regiao
+    # (visivel de qualquer angulo, sem duplicatas ".001" no outliner)
     dx, dz = W * 0.42, H * 0.42
     r = H * 0.30
     n = 32
     bw = r * 0.98
+    los_v, los_f = [], []
+    cir_v, cir_f = [], []
+    fai_v, fai_f = [], []
     for sy in (1.0, -1.0):
         y1, y2, y3 = 0.004 * sy, 0.008 * sy, 0.012 * sy
         # losango amarelo
-        _flag_poly("Flag_Losango",
-                   [(cx, y1, cz + dz), (cx + dx, y1, cz), (cx, y1, cz - dz), (cx - dx, y1, cz)],
-                   [(0, 1, 2, 3)], YELLOW, loc, rot)
-        # circulo azul
-        cverts = [(cx, y2, cz)]
+        b = len(los_v)
+        los_v += [(cx, y1, cz + dz), (cx + dx, y1, cz), (cx, y1, cz - dz), (cx - dx, y1, cz)]
+        los_f.append((b, b + 1, b + 2, b + 3))
+        # circulo azul (leque de triangulos)
+        b = len(cir_v)
+        cir_v.append((cx, y2, cz))
         for i in range(n):
             t = i / n * math.tau
-            cverts.append((cx + math.cos(t) * r, y2, cz + math.sin(t) * r * 0.92))
-        cfaces = [(0, i + 1, (i + 1) % n + 1) for i in range(n)]
-        _flag_poly("Flag_Circulo", cverts, cfaces, BLUE, loc, rot)
+            cir_v.append((cx + math.cos(t) * r, y2, cz + math.sin(t) * r * 0.92))
+        cir_f += [(b, b + i + 1, b + (i + 1) % n + 1) for i in range(n)]
         # faixa branca
-        _flag_poly("Flag_Faixa",
-                   [(cx - bw, y3, cz - r * 0.10), (cx + bw, y3, cz - r * 0.10),
-                    (cx + bw, y3, cz - r * 0.34), (cx - bw, y3, cz - r * 0.34)],
-                   [(0, 1, 2, 3)], WHITE, loc, rot)
+        b = len(fai_v)
+        fai_v += [(cx - bw, y3, cz - r * 0.10), (cx + bw, y3, cz - r * 0.10),
+                  (cx + bw, y3, cz - r * 0.34), (cx - bw, y3, cz - r * 0.34)]
+        fai_f.append((b, b + 1, b + 2, b + 3))
+    _flag_poly("Bandeira_Losango", los_v, los_f, YELLOW, loc, rot)
+    _flag_poly("Bandeira_Circulo", cir_v, cir_f, BLUE, loc, rot)
+    _flag_poly("Bandeira_Faixa", fai_v, fai_f, WHITE, loc, rot)
 
 
 # --------------------------------------------------------------------------- #
@@ -1309,10 +1443,9 @@ def render_all_shots(out_dir):
 
 
 def _build_one_spider(collection="WebSpider", emit=6.0):
-    """Constroi UMA aranha centrada (origem) na coleção dada."""
-    keys = ('shell', 'carbon', 'glass', 'accent', 'glow')
-    bms = {k: bmesh.new() for k in keys}
-    build_spider(bms, 0.0, 0.0, math.radians(90), s=1.3, phase=0)
+    """Constroi UMA aranha centrada (origem), em objetos por PARTE, na coleção dada."""
+    parts = {}
+    build_spider(parts, 0.0, 0.0, math.radians(90), s=1.3, phase=0)
     mats = {
         'shell':  make_shell("ShellWhite", (0.86, 0.88, 0.92), rough=0.22),
         'carbon': make_metal("Carbon", (0.035, 0.040, 0.050), 0.34, 0.3),
@@ -1320,8 +1453,9 @@ def _build_one_spider(collection="WebSpider", emit=6.0):
         'accent': make_metal("Anodized", (0.0, 0.45, 0.50), 0.30, 1.0),
         'glow':   make_emissive("Glow", (0.20, 0.85, 1.0), emit),
     }
-    for k in keys:
-        bm_to_object(bms[k], "Spider_" + k, mats[k], smooth=True, collection=collection)
+    for part_name, layers_dict in parts.items():
+        layers = [(b, mats[mk]) for mk, b in layers_dict.items()]
+        make_part("Aranha_" + part_name, layers, collection, smooth=True)
 
 
 def export_web_model(path):
